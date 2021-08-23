@@ -1,0 +1,21 @@
+body {
+    background-color: #222;
+    margin: 0;
+}
+
+#playField {
+    position: absolute;
+    transform: translate(-50%);
+    top: 40px;
+    left: 50%;
+    border: white solid 3px;
+}
+
+#settingsButton {
+    position: absolute;
+    transform: translate(-50%);
+    bottom: 30px;
+    left: 50%;
+    width: 80px;
+    height: 30px;
+}
