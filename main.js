@@ -198,6 +198,8 @@ $(document).ready(function(){
                         if (checkCollision("right")) return;
                         activeTetromino.x++;
                         render();
+                        clearTimeout(timeout[settings.controls.moveLeft]);
+                        clearInterval(interval[settings.controls.moveLeft]);
                     })
                     break;
                 case settings.controls.moveLeft:
@@ -205,6 +207,8 @@ $(document).ready(function(){
                         if (checkCollision("left")) return;
                         activeTetromino.x--;
                         render();
+                        clearTimeout(timeout[settings.controls.moveRight]);
+                        clearInterval(interval[settings.controls.moveRight]);
                     })
                     break;
                 case settings.controls.rotateCCW:

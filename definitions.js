@@ -135,7 +135,6 @@ Todo
 
  - Basic Tetris -
 Add T-bag option
-If left and right are pressed at the same time only press key pressed latest until released
 Add hardDrop
 Add leniency
 Add STS
