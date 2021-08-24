@@ -217,8 +217,7 @@ let dropRepeatRate = originalDropRepeatRate;
 Todo
 
  - Basic Tetris -
- Fix T-spin recognition
-Add SRS
+Still no Triple T-spins setups possible?
 Make hold visible
 Make next pieces visible
 Make a start/pause button

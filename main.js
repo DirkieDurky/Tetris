@@ -379,7 +379,7 @@ $(document).ready(function(){
     }
 
     function blockAtRelPos(x,y) {
-        return !!activeTetromino.x+x < gridW || activeTetromino.x > 1 || activeTetromino.y < gridH || activeTetromino.y > 1 ||
+        return !!activeTetromino.x+x > gridW || activeTetromino.x < 1 || activeTetromino.y > gridH || activeTetromino.y < 1 ||
             passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
     }
 
