@@ -132,8 +132,7 @@ function hexToRgbA(hex,opacity = 100){
 let gameRunning = false;
 
 let passiveBlocks = [];
-const spawnPosX = 6;
-const spawnPosY = 19;
+
 let activeTetromino = null;
 let ghostTetromino = null;
 let softDrop;
@@ -142,20 +141,18 @@ let tmp = null;
 let hold = null;
 let held = false;
 
-// const w=400;
-// const h=800;
-
-const gridW=20;
-const gridH=20;
-const blockSize = 40;
-const h = gridH*blockSize;
-const w = gridW*blockSize;
-
 // noinspection SpellCheckingInspection
 let settings = {
     das: 167,
     arr: 31,
     sds: 30,
+
+    gridHeight: 20,
+    gridWidth: 10,
+    blockSize: 40,
+    spawnPosX: 6,
+    spawnPosY: 19,
+
     gravity: 1,
     repeatRate: null,
     RotationSystem: "SRS",
@@ -203,11 +200,19 @@ let settings = {
 
 // My personal settings
 settings.das = 100;
-settings.arr = 0;
+settings.arr = 30;
 settings.gravity = 1;
 settings.sds = 0;
 settings.tudp = 999999;
+settings.gridWidth = 100;
+settings.gridHeight = 100;
+settings.blockSize = 8;
+settings.spawnPosX = 51
+settings.spawnPosY = 100;
 //
+
+const h = settings.gridHeight*settings.blockSize;
+const w = settings.gridWidth*settings.blockSize;
 
 let minRepeatRate = 25;
 let maxRepeatRate = 1000;

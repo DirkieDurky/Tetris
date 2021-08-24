@@ -7,8 +7,8 @@ $(document).ready(function(){
 
     function drawBlock(x,y,color,opacity = 100){
         ctx.fillStyle = hexToRgbA(color,opacity);
-        y = invert(y,1,gridH);
-        ctx.fillRect((w/gridW)*(x-1),(h/gridH)*(y-1),w/gridW,h/gridH);
+        y = invert(y,1,settings.gridHeight);
+        ctx.fillRect((w/settings.gridWidth)*(x-1),(h/settings.gridHeight*(y-1)),w/settings.gridWidth,h/settings.gridHeight);
     }
 
     function drawTetromino(x,y,tetromino,rotation,color,opacity = 100){
@@ -36,11 +36,11 @@ $(document).ready(function(){
     }
 
     //Make grid
-    for (let i=0;i<w;i=i+(w/gridW)) {
+    for (let i=0;i<w;i=i+(w/settings.gridWidth)) {
         ctx.moveTo(i,0);
         ctx.lineTo(i,h);
     }
-    for (let j=0;j<h;j=j+h/gridH) {
+    for (let j=0;j<h;j=j+h/settings.gridHeight) {
         ctx.moveTo(0,j);
         ctx.lineTo(w,j);
     }
@@ -73,8 +73,8 @@ $(document).ready(function(){
         }
 
         activeTetromino = {
-            x: spawnPosX,
-            y: spawnPosY,
+            x: settings.spawnPosX,
+            y: settings.spawnPosY,
             tetromino: tetromino,
             rotation: 0
         }
@@ -148,7 +148,7 @@ $(document).ready(function(){
         let activeBlocks = blocksFromTetromino(x, y, tetromino, rotation);
         if (activeBlocks.block1y < 1 || activeBlocks.block2y < 1 || activeBlocks.block3y < 1 || activeBlocks.block4y < 1 ||
             activeBlocks.block1x < 1 || activeBlocks.block2x < 1 || activeBlocks.block3x < 1 || activeBlocks.block4x < 1 ||
-            activeBlocks.block1x > gridW || activeBlocks.block2x > gridW || activeBlocks.block3x > gridW || activeBlocks.block4x > gridW) return true;
+            activeBlocks.block1x > settings.gridWidth || activeBlocks.block2x > settings.gridWidth || activeBlocks.block3x > settings.gridWidth || activeBlocks.block4x > settings.gridWidth) return true;
     }
 
     function checkBlockCollision(x,y,tetromino,rotation) {
@@ -175,7 +175,7 @@ $(document).ready(function(){
                 break;
             case "right":
                 activeBlocks = blocksFromTetromino(x+1,y,tetromino,rotation);
-                if (activeBlocks.block1x > gridW || activeBlocks.block2x > gridW || activeBlocks.block3x > gridW || activeBlocks.block4x > gridW ||
+                if (activeBlocks.block1x > settings.gridWidth || activeBlocks.block2x > settings.gridWidth || activeBlocks.block3x > settings.gridWidth || activeBlocks.block4x > settings.gridWidth ||
                 checkBlockCollision(x+1,y,tetromino,rotation)) return true;
                 break;
             case "rotateCw":
@@ -327,13 +327,25 @@ $(document).ready(function(){
                     }
                     break;
                 case settings.controls.softDrop:
-                    softDrop = setInterval(function(){
-                        if (checkCollision("down")) {clearInterval(gameTick); startInterval(); render(); return;}
-                        activeTetromino.y--;
-                        if (settings.sds !== 0) {
+                    if (settings.sds !== 0) {
+                        softDrop = setInterval(function () {
+                            if (checkCollision("down")) {
+                                clearInterval(gameTick);
+                                startInterval();
+                                render();
+                                return;
+                            }
+                            activeTetromino.y--;
                             render();
+                        }, settings.sds);
+                    } else {
+                        while (!checkCollision("down")) {
+                            activeTetromino.y--;
                         }
-                    },settings.sds);
+                        clearInterval(gameTick);
+                        startInterval();
+                        render();
+                    }
                     break;
                 case settings.controls.hardDrop:
                     while (!checkCollision("down")) {
@@ -365,7 +377,7 @@ $(document).ready(function(){
     let tudp = null;
 
     function spawnNextPiece() {
-        if (!checkCollision("all", spawnPosX, spawnPosY, numberToTetromino(nextPieces[0]), 0)) {
+        if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY, numberToTetromino(nextPieces[0]), 0)) {
             spawnTetromino(nextPieces[0]);
             nextPieces.splice(0,1);
             nextPieces.push(Math.floor(Math.random() * tetrominoes.length + 1));
@@ -424,7 +436,7 @@ $(document).ready(function(){
     }
 
     function blockAtRelPos(x,y) {
-        return !!activeTetromino.x+x > gridW || activeTetromino.x < 1 || activeTetromino.y > gridH || activeTetromino.y < 1 ||
+        return !!activeTetromino.x+x > settings.gridWidth || activeTetromino.x < 1 || activeTetromino.y > settings.gridHeight || activeTetromino.y < 1 ||
             passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
     }
 
@@ -458,9 +470,9 @@ $(document).ready(function(){
         //Check for line clear
         let line;
         let lineAmount = 0;
-        for (let i=0;i<gridH;i++) {
+        for (let i=0;i<settings.gridHeight;i++) {
             line = passiveBlocks.filter(el => el.y === i);
-            if (line.length >= gridW) {
+            if (line.length >= settings.gridWidth) {
                 lineAmount++;
                 i--;
                 //Remove line
