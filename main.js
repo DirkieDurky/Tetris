@@ -256,15 +256,17 @@ $(document).ready(function(){
             if (down.includes(keycode)) return;
             down.push(keycode);
 
+            if (tup !== null) {
+                clearTimeout(tup);
+                startTimeout();
+                console.log("tup reset!");
+            }
+
             switch (keycode) {
                 case settings.controls.moveRight:
                     das(keycode,function(){
                         if (checkCollision("right")) return;
                         activeTetromino.x++;
-                        if (tup !== null) {
-                            clearTimeout(tup);
-                            startTimeout();
-                        }
                         render();
                         clearTimeout(timeout[settings.controls.moveLeft]);
                         clearInterval(interval[settings.controls.moveLeft]);
@@ -274,10 +276,6 @@ $(document).ready(function(){
                     das(keycode,function(){
                         if (checkCollision("left")) return;
                         activeTetromino.x--;
-                        if (tup !== null) {
-                            clearTimeout(tup);
-                            startTimeout();
-                        }
                         render();
                         clearTimeout(timeout[settings.controls.moveRight]);
                         clearInterval(interval[settings.controls.moveRight]);
@@ -309,16 +307,18 @@ $(document).ready(function(){
                     }
                     break;
                 case settings.controls.softDrop:
-                    dropRepeatRate = originalDropRepeatRate/settings.sdf;
-                    clearInterval(gameTick);
-                    startInterval();
+                    softDrop = setInterval(function(){
+                        if (checkCollision("down")) {render(); return;}
+                        activeTetromino.y--;
+                        if (settings.sds !== 0) {
+                            render();
+                        }
+                    },settings.sds);
                     break;
                 case settings.controls.hardDrop:
                     while (!checkCollision("down")) {
                         activeTetromino.y--;
                     }
-                    clearTimeout(tup);
-                    clearTimeout(tudp);
                     placeTetromino();
                     break;
             }
@@ -335,9 +335,7 @@ $(document).ready(function(){
         clearInterval(interval[keycode]);
 
         if (keycode === settings.controls.softDrop) {
-            dropRepeatRate = originalDropRepeatRate;
-            clearInterval(gameTick);
-            startInterval();
+            clearInterval(softDrop);
         }
     })
 
@@ -370,8 +368,31 @@ $(document).ready(function(){
             nextPieces.push(Math.floor(Math.random() * tetrominoes.length+1));
         }
 
+        gameTick = setInterval(function () {
+            if (checkCollision("down")) {
+                if (settings.leniency) {
+                    if (tup === null) {
+                        startTimeout();
+                    }
+                    if (tudp === null) {
+                        tudp = setTimeout(function () {
+                            clearInterval(tup);
+                            if (checkCollision("down")) {
+                                placeTetromino();
+                            } else {
+                                tudp = null;
+                            }
+                        }, settings.tudp);
+                    }
+                } else {
+                    placeTetromino();
+                }
+            } else {
+                activeTetromino.y--;
+            }
+            render();
+        }, dropRepeatRate)
         spawnTetromino(nextPieces[0]);
-        startInterval();
     }
 
     function blockAtPos(x,y) {
@@ -425,11 +446,10 @@ $(document).ready(function(){
             }
             //Remove softDrop when piece placed
             if (settings.rswpp) {
-                if (dropRepeatRate !== originalDropRepeatRate) {
-                    dropRepeatRate = originalDropRepeatRate;
-                    clearInterval(gameTick);
-                    startInterval();
-                }
+                // if (dropRepeatRate !== originalDropRepeatRate) {
+                //     dropRepeatRate = originalDropRepeatRate;
+                // }
+                clearInterval(softDrop);
             }
             held = false;
         }
@@ -466,33 +486,6 @@ $(document).ready(function(){
         tup = null;
         tudp = null;
         spawnNextPiece();
-    }
-
-    function startInterval() {
-                gameTick = setInterval(function () {
-                    if (checkCollision("down")) {
-                        if (settings.leniency) {
-                            if (tup === null) {
-                                startTimeout();
-                            }
-                            if (tudp === null) {
-                                tudp = setTimeout(function () {
-                                    clearInterval(tup);
-                                    if (checkCollision("down")) {
-                                        placeTetromino();
-                                    } else {
-                                        tudp = null;
-                                    }
-                                }, settings.tudp);
-                            }
-                        } else {
-                            placeTetromino();
-                        }
-                    } else {
-                        activeTetromino.y--;
-                    }
-                    render();
-                }, dropRepeatRate)
     }
 
     function startTimeout() {

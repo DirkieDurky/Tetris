@@ -136,6 +136,7 @@ const spawnPosX = 6;
 const spawnPosY = 19;
 let activeTetromino = null;
 let ghostTetromino = null;
+let softDrop;
 
 let tmp = null;
 let hold = null;
@@ -150,17 +151,22 @@ const gridH=20;
 let settings = {
     das: 167,
     arr: 31,
-    sdf: 30,
+    sds: 30,
     gravity: 1,
     repeatRate: null,
-    SRS: true,
-    SrsVersion: "SRS",
+    RotationSystem: "SRS",
         /*Options:
-        SRS
+        NRS (Nintendo Rotation System)
+        ORS (Original Rotation System)
+        SRS (Super Rotation System)
         SRS-X
         SRS+
+        TBRS (Tetris Best Rotation System)
+        ARS (Arika Rotation System)
+        Sega Rotation System
+        DTET Rotation System
          */
-    leniency: true,
+    leniency: false,
         tup: 500, //Time until placed when not moving the piece
         tudp: 2000, //Time until piece is placed no matter what
     ghostPiece: true,
@@ -194,7 +200,9 @@ let settings = {
 // My personal settings
 settings.das = 100;
 settings.arr = 0;
-settings.gravity = 1;
+settings.gravity = 20;
+settings.sds = 0;
+settings.tudp = 999999;
 //
 
 let minRepeatRate = 25;
@@ -215,7 +223,6 @@ let dropRepeatRate = originalDropRepeatRate;
 
 /*
 Todo
-
  - Basic Tetris -
 Still no Triple T-spins setups possible?
 Make hold visible
@@ -224,6 +231,7 @@ Make a start/pause button
 Make 0 gravity stop the pieces from falling
 Make settings tab
 Add other bagtype options
+Add other Rotation System options
 
  - Finesse Trainer -
  4*7*10 = 280 possible options
