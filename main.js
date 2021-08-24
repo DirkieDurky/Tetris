@@ -144,10 +144,10 @@ $(document).ready(function(){
 
     function checkBlockCollision(x,y,tetromino,rotation) {
         let activeBlocks = blocksFromTetromino(x,y,tetromino,rotation);
-        if (passiveBlocks.find(el => el.x === activeBlocks.block1x && el.y === activeBlocks.block1y) ||
-            passiveBlocks.find(el => el.x === activeBlocks.block2x && el.y === activeBlocks.block2y) ||
-            passiveBlocks.find(el => el.x === activeBlocks.block3x && el.y === activeBlocks.block3y) ||
-            passiveBlocks.find(el => el.x === activeBlocks.block4x && el.y === activeBlocks.block4y)) return true;
+        if (blockAtPos(activeBlocks.block1x,activeBlocks.block1y) ||
+            blockAtPos(activeBlocks.block2x,activeBlocks.block2y) ||
+            blockAtPos(activeBlocks.block3x,activeBlocks.block3y) ||
+            blockAtPos(activeBlocks.block4x,activeBlocks.block4y)) return true;
     }
 
     function checkCollision(mode, x = activeTetromino.x, y = activeTetromino.y, tetromino = activeTetromino.tetromino, rotation = activeTetromino.rotation){
@@ -324,6 +324,14 @@ $(document).ready(function(){
         startInterval();
     }
 
+    function blockAtPos(x,y) {
+        return !!passiveBlocks.find(el => el.x === x && el.y === y);
+    }
+
+    function blockAtRelPos(x,y) {
+        return !!passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
+    }
+
     function placeTetromino() {
         let activeBlocks = blocksFromTetromino(activeTetromino.x, activeTetromino.y, activeTetromino.tetromino, activeTetromino.rotation);
         const color = tetrominoes.find(el => el.name === activeTetromino.tetromino).color;
@@ -332,6 +340,29 @@ $(document).ready(function(){
         passiveBlocks.push({x: activeBlocks.block2x, y: activeBlocks.block2y, color: color});
         passiveBlocks.push({x: activeBlocks.block3x, y: activeBlocks.block3y, color: color});
         passiveBlocks.push({x: activeBlocks.block4x, y: activeBlocks.block4y, color: color});
+        //Check for T-spin
+        let tSpin = false;
+        if (activeTetromino.tetromino === "T") {
+            switch (activeTetromino.rotation) {
+                case 0: if (blockAtRelPos(0,0) && blockAtRelPos(-2,0)) {
+                    console.log('0');
+                    if (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2)) tSpin = true;
+                } break;
+                case 1: if (blockAtRelPos(0,0) && blockAtRelPos(0,-2)) {
+                    console.log('1');
+                    if (blockAtRelPos(-2,0) || blockAtRelPos(-2,-2)) tSpin = true;
+                } break;
+                case 2: if (blockAtRelPos(-2,-2) && blockAtRelPos(0,-2)) {
+                    console.log('2');
+                    if (blockAtRelPos(0,0) || blockAtRelPos(-2,0)) tSpin = true;
+                } break;
+                case 3: if (blockAtRelPos(-2,0) && blockAtRelPos(-2,-2)) {
+                    console.log('3');
+                    if (blockAtRelPos(0,0) || blockAtRelPos(0,-2)) tSpin = true;
+                } break;
+            }
+        }
+
         //Check for line clear
         let line;
         let lineAmount = 0;
@@ -357,14 +388,33 @@ $(document).ready(function(){
         }
 
         switch (lineAmount) {
-            case 1: console.log("Single");
+            case 1:
+                if (tSpin) {
+                    console.log("T-Spin single");
+                } else {
+                    console.log("Single");
+                }
                 break;
-            case 2: console.log("Double");
+            case 2:
+                if (tSpin) {
+                    console.log("T-Spin double");
+                } else {
+                    console.log("Double");
+                }
                 break;
-            case 3: console.log("Triple");
+            case 3:
+                if (tSpin) {
+                    console.log("T-Spin triple");
+                } else {
+                    console.log("Triple");
+                }
                 break;
             case 4: console.log("Tetris!");
                 break;
+            default:
+                if (tSpin) {
+                    console.log("T-Spin");
+                }
         }
         tup = null;
         tudp = null;
