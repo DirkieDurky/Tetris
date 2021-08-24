@@ -87,6 +87,12 @@ let settings = {
     rswpp: true, //Remove softDrop when piece placed
     nesTetrisRotations: false,
     randomBagType: "trueRandom",
+        /*Options:
+        trueRandom
+        7-bag
+        14-bag
+        classic
+        */
     controls: {
         moveRight: 39,
         moveLeft: 37,
@@ -97,13 +103,6 @@ let settings = {
         hardDrop: 90
     }
 }
-
-/*randomBagType options:
-trueRandom
-7-bag
-14-bag
-classic
-*/
 
 let minRepeatRate = 25;
 let maxRepeatRate = 250;
@@ -134,8 +133,6 @@ let held = false;
 Todo
 
  - Basic Tetris -
-Add T-bag option
-Add hardDrop
 Add leniency
 Add STS
 Make hold visible
@@ -143,6 +140,7 @@ Make next pieces visible
 Make a start/pause button
 Make 0 gravity stop the pieces from falling
 Make settings tab
+Add T-bag option
 
  - Finesse Trainer -
  4*7*10 = 280 possible options

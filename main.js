@@ -239,6 +239,12 @@ $(document).ready(function(){
                     dropRepeatRate = originalDropRepeatRate/settings.sdf;
                     clearInterval(gameTick);
                     startInterval();
+                    break;
+                case settings.controls.hardDrop:
+                    while (!checkCollision("down")) {
+                        activeTetromino.y--;
+                    }
+                    break;
             }
             render();
     })
