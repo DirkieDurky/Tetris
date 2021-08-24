@@ -64,6 +64,8 @@ const tetrominoes = [
 ];
 
 let passiveBlocks = [];
+let tmp = null;
+let hold = null;
 
 const w=400;
 const h=800;
