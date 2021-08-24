@@ -65,7 +65,6 @@ $(document).ready(function(){
         if (Number.isInteger(tetromino)) {
             tetromino = numberToTetromino(tetromino);
         }
-        console.log(tetromino);
 
         drawTetromino(6,22,tetromino,0);
         activeTetromino = {
@@ -299,7 +298,7 @@ $(document).ready(function(){
             }
             activeTetromino.y--;
             render();
-        }, invert(settings.gravity, 0, 10) * 10)
+        }, dropRepeatRate)
     }
 
     $(document).keydown(function (e) {

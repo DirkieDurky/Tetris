@@ -82,6 +82,7 @@ let settings = {
     arr: 31,
     sdf: 6,
     gravity: 1,
+    leniency: true,
     controls: {
         moveRight: 39,
         moveLeft: 37,
@@ -92,3 +93,14 @@ let settings = {
         hardDrop: 90
     }
 }
+
+let minRepeatRate = 25;
+let maxRepeatRate = 500;
+let minGravity = 1;
+let maxGravity = 20;
+
+let repeatRatePerGravity = (maxRepeatRate-minRepeatRate)/(maxGravity-minGravity);
+let dropRepeatRate = maxRepeatRate;
+dropRepeatRate -= repeatRatePerGravity*(settings.gravity-minGravity);
+console.log(`repeatRatePerGravity: ${repeatRatePerGravity}`);
+console.log(`dropRepeatRate: ${dropRepeatRate}`);
