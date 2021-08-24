@@ -217,7 +217,7 @@ let dropRepeatRate = originalDropRepeatRate;
 Todo
 
  - Basic Tetris -
- Fix bug where pieces will be places when they were on ground but moved off
+ Fix T-spin recognition
 Add SRS
 Make hold visible
 Make next pieces visible

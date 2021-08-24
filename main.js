@@ -478,7 +478,11 @@ $(document).ready(function(){
                             if (tudp === null) {
                                 tudp = setTimeout(function () {
                                     clearInterval(tup);
-                                    placeTetromino();
+                                    if (checkCollision("down")) {
+                                        placeTetromino();
+                                    } else {
+                                        tudp = null;
+                                    }
                                 }, settings.tudp);
                             }
                         } else {
@@ -494,7 +498,11 @@ $(document).ready(function(){
     function startTimeout() {
         tup = setTimeout(function(){
             clearInterval(tudp);
-            placeTetromino();
+            if (checkCollision("down")) {
+                placeTetromino();
+            } else {
+                tup = null;
+            }
         },settings.tup);
     }
 
