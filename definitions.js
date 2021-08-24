@@ -64,7 +64,7 @@ const tetrominoes = [
     ])
 ];
 
-const SRSKickData = [{
+const SrsData = [{
     name:["T","J","L","S","Z"],
     rotations:[
     [[0,0],[-1,0],[-1,1],[0,-2],[-1,-2]],
@@ -167,7 +167,7 @@ let settings = {
         Sega Rotation System
         DTET Rotation System
          */
-    leniency: false,
+    leniency: true,
         tup: 500, //Time until placed when not moving the piece
         tudp: 2000, //Time until piece is placed no matter what
     ghostPiece: true,
@@ -204,11 +204,6 @@ settings.arr = 30;
 settings.gravity = 1;
 settings.sds = 0;
 settings.tudp = 999999;
-settings.gridWidth = 100;
-settings.gridHeight = 100;
-settings.blockSize = 8;
-settings.spawnPosX = 51
-settings.spawnPosY = 100;
 //
 
 const h = settings.gridHeight*settings.blockSize;
@@ -233,7 +228,6 @@ let dropRepeatRate = originalDropRepeatRate;
 /*
 Todo
  - Basic Tetris -
-Still no Triple T-spins setups possible?
 Make hold visible
 Make next pieces visible
 Make a start/pause button

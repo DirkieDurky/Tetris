@@ -203,7 +203,7 @@ $(document).ready(function(){
     }
 
     function tryPosition(x,y,rotation) {
-        // console.log(`trying position ${activeTetromino.x+x},${activeTetromino.y+y} with piece ${activeTetromino.tetromino} at rotation ${rotation}`)
+        console.log(`trying position ${activeTetromino.x+x},${activeTetromino.y+y} with piece ${activeTetromino.tetromino} at rotation ${rotation}`)
         return !(checkCollision("all",activeTetromino.x+x,activeTetromino.y+y,activeTetromino.tetromino,rotation))
     }
 
@@ -212,7 +212,7 @@ $(document).ready(function(){
         //if (checkCollision(collisionMode)) return;
         //activeTetromino.rotation = virtRotate(activeTetromino.rotation,direction);
 
-        rotationName = activeTetromino.rotation+"-"+virtRotate(activeTetromino.rotation,"ccw");
+        rotationName = activeTetromino.rotation+"-"+virtRotate(activeTetromino.rotation,direction);
         let rotation;
         switch (rotationName) {
             case "0-1": rotation = 0; break;
@@ -224,8 +224,10 @@ $(document).ready(function(){
             case "3-0": rotation = 6; break;
             case "0-3": rotation = 7; break;
         }
-        let neededSrsData = SRSKickData.find(el => el.name.includes(activeTetromino.tetromino)).rotations[rotation];
+        let neededSrsData = SrsData.find(el => el.name.includes(activeTetromino.tetromino)).rotations[rotation];
+        console.log(neededSrsData);
         for (let i=0;i<5;i++) {
+            console.log(neededSrsData[i][0]+","+neededSrsData[i][1]);
             if (tryPosition(neededSrsData[i][0],neededSrsData[i][1],virtRotate(activeTetromino.rotation,direction))) {
                 activeTetromino.x += neededSrsData[i][0];
                 activeTetromino.y += neededSrsData[i][1];
@@ -279,7 +281,6 @@ $(document).ready(function(){
             if (tup !== null) {
                 clearTimeout(tup);
                 startTimeout();
-                console.log("tup reset!");
             }
 
             switch (keycode) {
@@ -419,7 +420,31 @@ $(document).ready(function(){
         if (gameTick !== null) {
             clearInterval(gameTick);
         }
-        passiveBlocks = [];
+        passiveBlocks = [{
+            x: 4,
+            y: 1,
+            color : "#ffffff"
+        },{
+            x: 3,
+            y: 2,
+            color : "#ffffff"
+        },{
+            x: 6,
+            y: 2,
+            color : "#ffffff"
+        },{
+            x: 7,
+            y: 1,
+            color : "#ffffff"
+        },{
+            x: 6,
+            y: 3,
+            color : "#ffffff"
+        },{
+            x: 3,
+            y: 3,
+            color : "#ffffff"
+        }];
         hold = null;
 
         nextPieces = [];
