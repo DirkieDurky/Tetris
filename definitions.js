@@ -142,10 +142,14 @@ let tmp = null;
 let hold = null;
 let held = false;
 
-const w=400;
-const h=800;
-const gridW=10;
+// const w=400;
+// const h=800;
+
+const gridW=20;
 const gridH=20;
+const blockSize = 40;
+const h = gridH*blockSize;
+const w = gridW*blockSize;
 
 // noinspection SpellCheckingInspection
 let settings = {
@@ -200,7 +204,7 @@ let settings = {
 // My personal settings
 settings.das = 100;
 settings.arr = 0;
-settings.gravity = 20;
+settings.gravity = 1;
 settings.sds = 0;
 settings.tudp = 999999;
 //
