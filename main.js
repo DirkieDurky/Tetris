@@ -8,25 +8,28 @@ $(document).ready(function(){
         ctx.fillRect((w/gridW)*(x-1),(h/gridH)*(y-1),w/gridW,h/gridH);
     }
 
-    function drawTetromino(x,y,tetromino,rotation){
+    function drawTetromino(x,y,tetromino,rotation,color){
         let tetrominoData = tetrominoes.find(el => el.name === tetromino);
         let tetrominoRotation = tetrominoData.rotations[rotation];
+        if (typeof color === "undefined") {
+            color = tetrominoData.color;
+        }
         drawBlock(
             x+tetrominoRotation.block1x,
             y+tetrominoRotation.block1y,
-            tetrominoData.color);
+            color);
         drawBlock(
             x+tetrominoRotation.block2x,
             y+tetrominoRotation.block2y,
-            tetrominoData.color);
+            color);
         drawBlock(
             x+tetrominoRotation.block3x,
             y+tetrominoRotation.block3y,
-            tetrominoData.color);
+            color);
         drawBlock(
             x+tetrominoRotation.block4x,
             y+tetrominoRotation.block4y,
-            tetrominoData.color);
+            color);
     }
 
     //Make grid
@@ -48,8 +51,6 @@ $(document).ready(function(){
         ctx.stroke();
     }
 
-    let activeTetromino = null;
-
     function numberToTetromino(number) {
         switch (number) {
             case 1: return "I";
@@ -68,18 +69,28 @@ $(document).ready(function(){
             tetromino = numberToTetromino(tetromino);
         }
 
-        drawTetromino(spawnPosX,spawnPosY,tetromino,0);
         activeTetromino = {
             x: spawnPosX,
             y: spawnPosY,
             tetromino: tetromino,
             rotation: 0
         }
+
         render();
     }
 
     function render() {
         clearCanvas();
+
+        //Get ghost piece position
+        ghostTetromino = {
+            y: activeTetromino.y,
+            color: ghostPieceColor
+        }
+        while (!checkCollision("down",activeTetromino.x,ghostTetromino.y,activeTetromino.tetromino,activeTetromino.rotation)) {
+            ghostTetromino.y--;
+        }
+        drawTetromino(activeTetromino.x,ghostTetromino.y,activeTetromino.tetromino,activeTetromino.rotation,ghostTetromino.color);
         drawTetromino(activeTetromino.x,activeTetromino.y,activeTetromino.tetromino,activeTetromino.rotation);
         for (let i=0;i<passiveBlocks.length;i++) {
             drawBlock(passiveBlocks[i].x,passiveBlocks[i].y,passiveBlocks[i].color);
@@ -244,6 +255,7 @@ $(document).ready(function(){
                     while (!checkCollision("down")) {
                         activeTetromino.y--;
                     }
+                    placeBlock();
                     break;
             }
             render();
@@ -296,52 +308,56 @@ $(document).ready(function(){
         startInterval();
     }
 
+    function placeBlock() {
+        let activeBlocks = blocksFromTetromino(activeTetromino.x, activeTetromino.y, activeTetromino.tetromino, activeTetromino.rotation);
+        const color = tetrominoes.find(el => el.name === activeTetromino.tetromino).color;
+        //Add all blocks of active Tetromino to passiveBlocks array
+        passiveBlocks.push({x: activeBlocks.block1x, y: activeBlocks.block1y, color: color});
+        passiveBlocks.push({x: activeBlocks.block2x, y: activeBlocks.block2y, color: color});
+        passiveBlocks.push({x: activeBlocks.block3x, y: activeBlocks.block3y, color: color});
+        passiveBlocks.push({x: activeBlocks.block4x, y: activeBlocks.block4y, color: color});
+        //Check for line clear
+        let line;
+        let lineAmount = 0;
+        for (let i=0;i<gridH;i++) {
+            line = passiveBlocks.filter(el => el.y === i);
+            if (line.length >= gridW) {
+                lineAmount++;
+                i--;
+                //Remove line
+                line.forEach(el => passiveBlocks.splice(passiveBlocks.indexOf(el),1));
+                //Move all blocks above line down by 1
+                passiveBlocks.filter(el => el.y > i).forEach(el => el.y--);
+            }
+            //Remove softDrop when piece placed
+            if (settings.rswpp) {
+                if (dropRepeatRate !== originalDropRepeatRate) {
+                    dropRepeatRate = originalDropRepeatRate;
+                    clearInterval(gameTick);
+                    startInterval();
+                }
+            }
+            held = false;
+        }
+
+        switch (lineAmount) {
+            case 1: console.log("Single");
+                break;
+            case 2: console.log("Double");
+                break;
+            case 3: console.log("Triple");
+                break;
+            case 4: console.log("Tetris!");
+                break;
+        }
+
+        spawnNextPiece();
+    }
+
     function startInterval() {
         gameTick = setInterval(function () {
             if (checkCollision("down")) {
-                let activeBlocks = blocksFromTetromino(activeTetromino.x, activeTetromino.y, activeTetromino.tetromino, activeTetromino.rotation);
-                const color = tetrominoes.find(el => el.name === activeTetromino.tetromino).color;
-                //Add all blocks of active Tetromino to passiveBlocks array
-                passiveBlocks.push({x: activeBlocks.block1x, y: activeBlocks.block1y, color: color});
-                passiveBlocks.push({x: activeBlocks.block2x, y: activeBlocks.block2y, color: color});
-                passiveBlocks.push({x: activeBlocks.block3x, y: activeBlocks.block3y, color: color});
-                passiveBlocks.push({x: activeBlocks.block4x, y: activeBlocks.block4y, color: color});
-                //Check for line clear
-                let line;
-                let lineAmount = 0;
-                for (let i=0;i<gridH;i++) {
-                    line = passiveBlocks.filter(el => el.y === i);
-                    if (line.length >= gridW) {
-                        lineAmount++;
-                        i--;
-                        //Remove line
-                        line.forEach(el => passiveBlocks.splice(passiveBlocks.indexOf(el),1));
-                        //Move all blocks above line down by 1
-                        passiveBlocks.filter(el => el.y > i).forEach(el => el.y--);
-                    }
-                    //Remove softDrop when piece placed
-                    if (settings.rswpp) {
-                        if (dropRepeatRate !== originalDropRepeatRate) {
-                            dropRepeatRate = originalDropRepeatRate;
-                            clearInterval(gameTick);
-                            startInterval();
-                        }
-                    }
-                    held = false;
-                }
-
-                switch (lineAmount) {
-                    case 1: console.log("Single");
-                        break;
-                    case 2: console.log("Double");
-                        break;
-                    case 3: console.log("Triple");
-                        break;
-                    case 4: console.log("Tetris!");
-                        break;
-                }
-
-                spawnNextPiece();
+                placeBlock();
             } else {
                 activeTetromino.y--;
             }

@@ -64,6 +64,8 @@ const tetrominoes = [
     ])
 ];
 
+let ghostPieceColor = "#7d7d7d";
+
 function invert(input, min, max) {
     let distance = input - min;
     return max - distance;
@@ -72,6 +74,8 @@ function invert(input, min, max) {
 let passiveBlocks = [];
 let tmp = null;
 let hold = null;
+let activeTetromino = null;
+let ghostTetromino = null;
 
 const w=400;
 const h=800;
@@ -105,14 +109,14 @@ let settings = {
 }
 
 let minRepeatRate = 25;
-let maxRepeatRate = 250;
+let maxRepeatRate = 1000;
 let minGravity = 1;
 let maxGravity = 20;
 
 // My preferred settings
 settings.das = 100;
 settings.arr = 0;
-settings.gravity = 14;
+settings.gravity = 1;
 //
 
 if (settings.gravity > maxGravity || settings.gravity < minGravity) {
