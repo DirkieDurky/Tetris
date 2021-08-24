@@ -108,7 +108,7 @@ let settings = {
         Custom color
         Same as Tetromino
          */
-    ghostPieceOpacity: 10,
+    ghostPieceOpacity: 50,
     rswpp: true, //Remove softDrop when piece placed
     nesTetrisRotations: false,
     randomBagType: "trueRandom",
@@ -165,7 +165,7 @@ Make next pieces visible
 Make a start/pause button
 Make 0 gravity stop the pieces from falling
 Make settings tab
-Add T-bag option
+Add other bagtype options
 
  - Finesse Trainer -
  4*7*10 = 280 possible options

@@ -2,6 +2,9 @@ $(document).ready(function(){
     const canvas = document.getElementById("playField");
     const ctx = canvas.getContext("2d");
 
+    document.getElementById("playField").setAttribute("width",w+"px");
+    document.getElementById("playField").setAttribute("height",h+"px");
+
     function drawBlock(x,y,color,opacity = 100){
         ctx.fillStyle = hexToRgbA(color,opacity);
         y = invert(y,1,gridH);
