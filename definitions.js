@@ -67,9 +67,9 @@ let passiveBlocks = [];
 let tmp = null;
 let hold = null;
 
-const w=400;
+const w=800;
 const h=800;
-const gridW=10;
+const gridW=20;
 const gridH=20;
 
 function invert(input, min, max) {
@@ -83,6 +83,7 @@ let settings = {
     sdf: 6,
     gravity: 1,
     leniency: true,
+    randomBagType: "trueRandom",
     controls: {
         moveRight: 39,
         moveLeft: 37,
@@ -94,10 +95,23 @@ let settings = {
     }
 }
 
+/*randomBagType options:
+trueRandom
+7-bag
+14-bag
+classic
+*/
+
 let minRepeatRate = 25;
-let maxRepeatRate = 500;
+let maxRepeatRate = 250;
 let minGravity = 1;
 let maxGravity = 20;
+
+// My preferred settings
+settings.das = 100;
+settings.arr = 0;
+settings.gravity = 14;
+//
 
 if (settings.gravity > maxGravity || settings.gravity < minGravity) {
     throw "Invalid gravity";
@@ -105,13 +119,17 @@ if (settings.gravity > maxGravity || settings.gravity < minGravity) {
 let repeatRatePerGravity = (maxRepeatRate-minRepeatRate)/(maxGravity-minGravity);
 let dropRepeatRate = maxRepeatRate;
 dropRepeatRate -= repeatRatePerGravity*(settings.gravity-minGravity);
-console.log(`repeatRatePerGravity: ${repeatRatePerGravity}`);
-console.log(`dropRepeatRate: ${dropRepeatRate}`);
+
+let gameRunning = false;
+let spawnPosX = 6;
+let spawnPosY = 19;
 
 /*
 Todo
 
  - Basic Tetris -
+Add T-bag option
+If left and right are pressed at the same time only press key pressed latest until released
 Add softDrop
 Add hardDrop
 Add leniency
