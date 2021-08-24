@@ -116,6 +116,15 @@ $(document).ready(function(){
                 } else {
                     return 3;
                 }
+            case "180":
+                for (let i=0;i<2;i++){
+                    if (rotation < 3) {
+                        rotation = rotation+1;
+                    } else {
+                        rotation = 0;
+                    }
+                }
+                return rotation;
             default:
                 throw "Enter a valid direction";
         }
@@ -158,17 +167,17 @@ $(document).ready(function(){
                 activeBlocks = blocksFromTetromino(x,y-1,tetromino,rotation);
                 if (activeBlocks.block1y < 1 || activeBlocks.block2y < 1 || activeBlocks.block3y < 1 || activeBlocks.block4y < 1) return true;
                 if (checkBlockCollision(x,y-1,tetromino,rotation)) return true;
-            break;
+                break;
             case "left":
                 activeBlocks = blocksFromTetromino(x-1,y,tetromino,rotation);
                 if (activeBlocks.block1x < 1 || activeBlocks.block2x < 1 || activeBlocks.block3x < 1 || activeBlocks.block4x < 1 ||
                     checkBlockCollision(x-1,y,tetromino,rotation)) return true;
-            break;
+                break;
             case "right":
                 activeBlocks = blocksFromTetromino(x+1,y,tetromino,rotation);
                 if (activeBlocks.block1x > gridW || activeBlocks.block2x > gridW || activeBlocks.block3x > gridW || activeBlocks.block4x > gridW ||
                 checkBlockCollision(x+1,y,tetromino,rotation)) return true;
-            break;
+                break;
             case "rotateCw":
                 VirtRotation = rotate(rotation, "cw");
                 if (checkOutOfBounds(x,y,tetromino,VirtRotation) ||
@@ -176,6 +185,11 @@ $(document).ready(function(){
                 break;
             case "rotateCcw":
                 VirtRotation = rotate(rotation, "ccw");
+                if (checkOutOfBounds(x,y,tetromino,VirtRotation)||
+                    checkBlockCollision(x,y,tetromino,VirtRotation)) return true;
+                break;
+            case "rotate180":
+                VirtRotation = rotate(rotation, "180");
                 if (checkOutOfBounds(x,y,tetromino,VirtRotation)||
                     checkBlockCollision(x,y,tetromino,VirtRotation)) return true;
                 break;
@@ -241,6 +255,11 @@ $(document).ready(function(){
                 case settings.controls.rotateCW:
                     if (checkCollision("rotateCw")) return;
                     activeTetromino.rotation = rotate(activeTetromino.rotation,"cw");
+                    break;
+                case settings.controls.rotate180:
+                    if (checkCollision("rotate180")) return;
+                    console.log('h');
+                    activeTetromino.rotation = rotate(activeTetromino.rotation,"180");
                     break;
                 case settings.controls.hold:
                     if (!held) {
@@ -345,19 +364,15 @@ $(document).ready(function(){
         if (activeTetromino.tetromino === "T") {
             switch (activeTetromino.rotation) {
                 case 0: if (blockAtRelPos(0,0) && blockAtRelPos(-2,0)) {
-                    console.log('0');
                     if (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2)) tSpin = true;
                 } break;
                 case 1: if (blockAtRelPos(0,0) && blockAtRelPos(0,-2)) {
-                    console.log('1');
                     if (blockAtRelPos(-2,0) || blockAtRelPos(-2,-2)) tSpin = true;
                 } break;
                 case 2: if (blockAtRelPos(-2,-2) && blockAtRelPos(0,-2)) {
-                    console.log('2');
                     if (blockAtRelPos(0,0) || blockAtRelPos(-2,0)) tSpin = true;
                 } break;
                 case 3: if (blockAtRelPos(-2,0) && blockAtRelPos(-2,-2)) {
-                    console.log('3');
                     if (blockAtRelPos(0,0) || blockAtRelPos(0,-2)) tSpin = true;
                 } break;
             }

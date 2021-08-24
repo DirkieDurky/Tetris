@@ -132,6 +132,7 @@ let settings = {
         hold: 38,
         rotateCCW: 88,
         rotateCW: 67,
+        rotate180: 86,
         hardDrop: 90
     }
 }
