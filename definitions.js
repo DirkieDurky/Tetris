@@ -128,6 +128,7 @@ let dropRepeatRate = originalDropRepeatRate;
 let gameRunning = false;
 let spawnPosX = 6;
 let spawnPosY = 19;
+let held = false;
 
 /*
 Todo
@@ -135,7 +136,6 @@ Todo
  - Basic Tetris -
 Add T-bag option
 If left and right are pressed at the same time only press key pressed latest until released
-Make hold only allowed once per block
 Add hardDrop
 Add leniency
 Add STS

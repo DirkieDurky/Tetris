@@ -216,16 +216,19 @@ $(document).ready(function(){
                     activeTetromino.rotation = rotate(activeTetromino.rotation,"cw");
                     break;
                 case settings.controls.hold:
-                    if (hold == null){
-                        hold = activeTetromino.tetromino;
-                        activeTetromino = null;
-                        spawnNextPiece();
-                    } else {
-                        tmp = activeTetromino.tetromino;
-                        activeTetromino = null;
-                        spawnTetromino(hold);
-                        hold = tmp;
-                        tmp = null;
+                    if (!held) {
+                        held = true;
+                        if (hold == null) {
+                            hold = activeTetromino.tetromino;
+                            activeTetromino = null;
+                            spawnNextPiece();
+                        } else {
+                            tmp = activeTetromino.tetromino;
+                            activeTetromino = null;
+                            spawnTetromino(hold);
+                            hold = tmp;
+                            tmp = null;
+                        }
                     }
                     break;
                 case settings.controls.softDrop:
@@ -314,6 +317,7 @@ $(document).ready(function(){
                             startInterval();
                         }
                     }
+                    held = false;
                 }
 
                 switch (lineAmount) {
