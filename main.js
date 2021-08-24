@@ -229,7 +229,9 @@ $(document).ready(function(){
                     }
                     break;
                 case settings.controls.softDrop:
-                    dropRepeatRate = dropRepeatRate*settings.sdf;
+                    dropRepeatRate = originalDropRepeatRate/settings.sdf;
+                    clearInterval(gameTick);
+                    startInterval();
             }
             render();
     })
@@ -242,6 +244,12 @@ $(document).ready(function(){
         }
         clearTimeout(timeout[keycode]);
         clearInterval(interval[keycode]);
+
+        if (keycode === settings.controls.softDrop) {
+            dropRepeatRate = originalDropRepeatRate;
+            clearInterval(gameTick);
+            startInterval();
+        }
     })
 
     let nextPieces;
@@ -272,6 +280,10 @@ $(document).ready(function(){
         }
 
         spawnTetromino(nextPieces[0]);
+        startInterval();
+    }
+
+    function startInterval() {
         gameTick = setInterval(function () {
             if (checkCollision("down")) {
                 let activeBlocks = blocksFromTetromino(activeTetromino.x, activeTetromino.y, activeTetromino.tetromino, activeTetromino.rotation);
@@ -293,6 +305,14 @@ $(document).ready(function(){
                         line.forEach(el => passiveBlocks.splice(passiveBlocks.indexOf(el),1));
                         //Move all blocks above line down by 1
                         passiveBlocks.filter(el => el.y > i).forEach(el => el.y--);
+                    }
+                    //Remove softDrop when piece placed
+                    if (settings.rswpp) {
+                        if (dropRepeatRate !== originalDropRepeatRate) {
+                            dropRepeatRate = originalDropRepeatRate;
+                            clearInterval(gameTick);
+                            startInterval();
+                        }
                     }
                 }
 

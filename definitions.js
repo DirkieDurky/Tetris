@@ -18,6 +18,7 @@ class Rotation {
         this.block4y = block4y;
     }
 }
+
 const tetrominoes = [
     new Tetromino("I","#009ad6", [
         new Rotation(-2,0,-1, 0, 0, 0, 1, 0),
@@ -63,19 +64,19 @@ const tetrominoes = [
     ])
 ];
 
-let passiveBlocks = [];
-let tmp = null;
-let hold = null;
-
-const w=800;
-const h=800;
-const gridW=20;
-const gridH=20;
-
 function invert(input, min, max) {
     let distance = input - min;
     return max - distance;
 }
+
+let passiveBlocks = [];
+let tmp = null;
+let hold = null;
+
+const w=400;
+const h=800;
+const gridW=10;
+const gridH=20;
 
 let settings = {
     das: 167,
@@ -83,6 +84,8 @@ let settings = {
     sdf: 6,
     gravity: 1,
     leniency: true,
+    rswpp: true, //Remove softDrop when piece placed
+    nesTetrisRotations: false,
     randomBagType: "trueRandom",
     controls: {
         moveRight: 39,
@@ -117,8 +120,10 @@ if (settings.gravity > maxGravity || settings.gravity < minGravity) {
     throw "Invalid gravity";
 }
 let repeatRatePerGravity = (maxRepeatRate-minRepeatRate)/(maxGravity-minGravity);
-let dropRepeatRate = maxRepeatRate;
-dropRepeatRate -= repeatRatePerGravity*(settings.gravity-minGravity);
+let originalDropRepeatRate = maxRepeatRate;
+originalDropRepeatRate -= repeatRatePerGravity*(settings.gravity-minGravity);
+
+let dropRepeatRate = originalDropRepeatRate;
 
 let gameRunning = false;
 let spawnPosX = 6;
@@ -130,7 +135,7 @@ Todo
  - Basic Tetris -
 Add T-bag option
 If left and right are pressed at the same time only press key pressed latest until released
-Add softDrop
+Make hold only allowed once per block
 Add hardDrop
 Add leniency
 Add STS
