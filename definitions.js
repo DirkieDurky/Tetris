@@ -64,9 +64,56 @@ const tetrominoes = [
     ])
 ];
 
+const SRSKickData = [{
+    name:["T","J","L","S","Z"],
+    rotations:[
+    [[0,0],[-1,0],[-1,1],[0,-2],[-1,-2]],
+    [[0,0],[1,0],[1,-1],[0,2],[1,2]],
+
+    [[0,0],[1,0],[1,-1],[0,2],[1,2]],
+    [[0,0],[-1,0],[-1,1],[0,-2],[-1,-2]],
+
+    [[0,0],[1,0],[1,1],[0,-2],[1,-2]],
+    [[0,0],[-1,0],[-1,-1],[0,2],[-1,2]],
+
+    [[0,0],[-1,0],[-1,-1],[0,2],[-1,2]],
+    [[0,0],[1,0],[1,1],[0,-2],[1,-2]]
+]
+},{
+    name:"I",
+    rotations:[
+    [[0,0],[-2,0],[1,0],[-2,1],[1,1]],
+    [[0,0],[2,0],[-1,0],[2,-1],[-1,-1]],
+
+    [[0,0],[-1,0],[2,0],[-1,2],[2,-1]],
+    [[0,0],[1,0],[-2,0],[1,-2],[-2,1]],
+
+    [[0,0],[2,0],[-1,0],[2,1],[-1,-2]],
+    [[0,0],[-2,0],[1,0],[-2,-1],[1,2]],
+
+    [[0,0],[1,0],[-2,0],[1,-2],[-2,1]],
+    [[0,0],[-1,0],[2,0],[-1,2],[2,-1]]
+]
+}
+]
+
+/*
+"0-1":
+"1-2":
+"2-3":
+"3-0":
+ */
 function invert(input, min, max) {
     let distance = input - min;
     return max - distance;
+}
+
+function negPos(int) {
+    if (int < 0) {
+        return Math.abs(int);
+    } else if (int > 0) {
+        return int-int*2;
+    } else return 0;
 }
 
 function hexToRgbA(hex,opacity = 100){
@@ -106,6 +153,13 @@ let settings = {
     sdf: 30,
     gravity: 1,
     repeatRate: null,
+    SRS: true,
+    SrsVersion: "SRS",
+        /*Options:
+        SRS
+        SRS-X
+        SRS+
+         */
     leniency: true,
         tup: 500, //Time until placed when not moving the piece
         tudp: 2000, //Time until piece is placed no matter what
@@ -163,7 +217,8 @@ let dropRepeatRate = originalDropRepeatRate;
 Todo
 
  - Basic Tetris -
-Add STS
+ Fix bug where pieces will be places when they were on ground but moved off
+Add SRS
 Make hold visible
 Make next pieces visible
 Make a start/pause button
@@ -175,4 +230,18 @@ Add other bagtype options
  4*7*10 = 280 possible options
 Make object with all possible piece placements and the best keystrokes needed to put that piece there / A way to calculate best keystrokes per option
 Make selection screen with all possible piece placements / Just a piece selection screen with a way to select option by moving piece to that specific position and rotation
- */
+
+ - Bonus -
+Score display
+Line count
+Tetromino count
+Tetris rate
+Burn amount
+Levels
+Recognise other piece spins
+Recognise combo
+
+Customisable death cause
+    - Not being able to place tetromino
+    - Block placed over specific height
+*/

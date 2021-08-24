@@ -101,7 +101,7 @@ $(document).ready(function(){
         }
     }
 
-    function rotate(rotation, direction) {
+    function virtRotate(rotation, direction) {
         direction = direction.toLowerCase();
         switch (direction) {
             case "cw":
@@ -179,17 +179,17 @@ $(document).ready(function(){
                 checkBlockCollision(x+1,y,tetromino,rotation)) return true;
                 break;
             case "rotateCw":
-                VirtRotation = rotate(rotation, "cw");
+                VirtRotation = virtRotate(rotation, "cw");
                 if (checkOutOfBounds(x,y,tetromino,VirtRotation) ||
                 checkBlockCollision(x,y,tetromino,VirtRotation)) return true;
                 break;
             case "rotateCcw":
-                VirtRotation = rotate(rotation, "ccw");
+                VirtRotation = virtRotate(rotation, "ccw");
                 if (checkOutOfBounds(x,y,tetromino,VirtRotation)||
                     checkBlockCollision(x,y,tetromino,VirtRotation)) return true;
                 break;
             case "rotate180":
-                VirtRotation = rotate(rotation, "180");
+                VirtRotation = virtRotate(rotation, "180");
                 if (checkOutOfBounds(x,y,tetromino,VirtRotation)||
                     checkBlockCollision(x,y,tetromino,VirtRotation)) return true;
                 break;
@@ -212,9 +212,44 @@ $(document).ready(function(){
         }, settings.das);
     }
 
+    function tryPosition(x,y,rotation) {
+        // console.log(`trying position ${activeTetromino.x+x},${activeTetromino.y+y} with piece ${activeTetromino.tetromino} at rotation ${rotation}`)
+        return !(checkCollision("all",activeTetromino.x+x,activeTetromino.y+y,activeTetromino.tetromino,rotation))
+    }
+
+    function rotate(collisionMode, direction) {
+        if (activeTetromino.tetromino === "O") return;
+        //if (checkCollision(collisionMode)) return;
+        //activeTetromino.rotation = virtRotate(activeTetromino.rotation,direction);
+
+        rotationName = activeTetromino.rotation+"-"+virtRotate(activeTetromino.rotation,"ccw");
+        let rotation;
+        switch (rotationName) {
+            case "0-1": rotation = 0; break;
+            case "1-0": rotation = 1; break;
+            case "1-2": rotation = 2; break;
+            case "2-1": rotation = 3; break;
+            case "2-3": rotation = 4; break;
+            case "3-2": rotation = 5; break;
+            case "3-0": rotation = 6; break;
+            case "0-3": rotation = 7; break;
+        }
+        let neededSrsData = SRSKickData.find(el => el.name.includes(activeTetromino.tetromino)).rotations[rotation];
+        for (let i=0;i<5;i++) {
+            if (tryPosition(neededSrsData[i][0],neededSrsData[i][1],virtRotate(activeTetromino.rotation,direction))) {
+                activeTetromino.x += neededSrsData[i][0];
+                activeTetromino.y += neededSrsData[i][1];
+                activeTetromino.rotation = virtRotate(activeTetromino.rotation,direction);
+                return;
+            }
+        }
+        console.log('no possible options found!');
+    }
+
     let down = [];
     let timeout = [];
     let interval = [];
+    let rotationName;
 
     $(document).keydown(function (e) {
             let keycode = (e.keyCode ? e.keyCode : e.which);
@@ -249,17 +284,13 @@ $(document).ready(function(){
                     })
                     break;
                 case settings.controls.rotateCCW:
-                    if (checkCollision("rotateCcw")) return;
-                    activeTetromino.rotation = rotate(activeTetromino.rotation,"ccw");
+                    rotate("rotateCcw","ccw");
                     break;
                 case settings.controls.rotateCW:
-                    if (checkCollision("rotateCw")) return;
-                    activeTetromino.rotation = rotate(activeTetromino.rotation,"cw");
+                    rotate("rotateCcw","cw");
                     break;
                 case settings.controls.rotate180:
-                    if (checkCollision("rotate180")) return;
-                    console.log('h');
-                    activeTetromino.rotation = rotate(activeTetromino.rotation,"180");
+                    rotate("rotateCcw","180");
                     break;
                 case settings.controls.hold:
                     if (!held) {
