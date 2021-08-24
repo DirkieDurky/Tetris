@@ -2,13 +2,13 @@ $(document).ready(function(){
     const canvas = document.getElementById("playField");
     const ctx = canvas.getContext("2d");
 
-    function drawBlock(x,y,color){
-        ctx.fillStyle = color;
+    function drawBlock(x,y,color,opacity = 100){
+        ctx.fillStyle = hexToRgbA(color,opacity);
         y = invert(y,1,gridH);
         ctx.fillRect((w/gridW)*(x-1),(h/gridH)*(y-1),w/gridW,h/gridH);
     }
 
-    function drawTetromino(x,y,tetromino,rotation,color){
+    function drawTetromino(x,y,tetromino,rotation,color,opacity = 100){
         let tetrominoData = tetrominoes.find(el => el.name === tetromino);
         let tetrominoRotation = tetrominoData.rotations[rotation];
         if (typeof color === "undefined") {
@@ -17,19 +17,19 @@ $(document).ready(function(){
         drawBlock(
             x+tetrominoRotation.block1x,
             y+tetrominoRotation.block1y,
-            color);
+            color,opacity);
         drawBlock(
             x+tetrominoRotation.block2x,
             y+tetrominoRotation.block2y,
-            color);
+            color,opacity);
         drawBlock(
             x+tetrominoRotation.block3x,
             y+tetrominoRotation.block3y,
-            color);
+            color,opacity);
         drawBlock(
             x+tetrominoRotation.block4x,
             y+tetrominoRotation.block4y,
-            color);
+            color,opacity);
     }
 
     //Make grid
@@ -83,14 +83,15 @@ $(document).ready(function(){
         clearCanvas();
 
         //Get ghost piece position
-        ghostTetromino = {
-            y: activeTetromino.y,
-            color: ghostPieceColor
+        if (settings.ghostPiece) {
+            ghostTetromino = {
+                y: activeTetromino.y,
+            }
+            while (!checkCollision("down", activeTetromino.x, ghostTetromino.y, activeTetromino.tetromino, activeTetromino.rotation)) {
+                ghostTetromino.y--;
+            }
+            drawTetromino(activeTetromino.x, ghostTetromino.y, activeTetromino.tetromino, activeTetromino.rotation, settings.ghostPieceColor, settings.ghostPieceOpacity);
         }
-        while (!checkCollision("down",activeTetromino.x,ghostTetromino.y,activeTetromino.tetromino,activeTetromino.rotation)) {
-            ghostTetromino.y--;
-        }
-        drawTetromino(activeTetromino.x,ghostTetromino.y,activeTetromino.tetromino,activeTetromino.rotation,ghostTetromino.color);
         drawTetromino(activeTetromino.x,activeTetromino.y,activeTetromino.tetromino,activeTetromino.rotation);
         for (let i=0;i<passiveBlocks.length;i++) {
             drawBlock(passiveBlocks[i].x,passiveBlocks[i].y,passiveBlocks[i].color);

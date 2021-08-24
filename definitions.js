@@ -64,11 +64,22 @@ const tetrominoes = [
     ])
 ];
 
-let ghostPieceColor = "#7d7d7d";
-
 function invert(input, min, max) {
     let distance = input - min;
     return max - distance;
+}
+
+function hexToRgbA(hex,opacity = 100){
+    let c;
+    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        c = hex.substring(1).split('');
+        if(c.length === 3){
+            c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        c = '0x'+c.join('');
+        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+opacity/100+')';
+    }
+    throw new Error('Bad Hex');
 }
 
 let passiveBlocks = [];
@@ -82,12 +93,22 @@ const h=800;
 const gridW=10;
 const gridH=20;
 
+// noinspection SpellCheckingInspection
 let settings = {
     das: 167,
     arr: 31,
-    sdf: 6,
+    sdf: 30,
     gravity: 1,
     leniency: true,
+        tup: 500, //Time until placed when not moving the piece
+        tudp: 2000, //Time until piece is placed no matter what
+    ghostPiece: true,
+    ghostPieceColor: "#7d7d7d",
+        /*Options:
+        Custom color
+        Same as Tetromino
+         */
+    ghostPieceOpacity: 10,
     rswpp: true, //Remove softDrop when piece placed
     nesTetrisRotations: false,
     randomBagType: "trueRandom",
