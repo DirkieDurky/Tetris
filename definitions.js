@@ -99,8 +99,31 @@ let maxRepeatRate = 500;
 let minGravity = 1;
 let maxGravity = 20;
 
+if (settings.gravity > maxGravity || settings.gravity < minGravity) {
+    throw "Invalid gravity";
+}
 let repeatRatePerGravity = (maxRepeatRate-minRepeatRate)/(maxGravity-minGravity);
 let dropRepeatRate = maxRepeatRate;
 dropRepeatRate -= repeatRatePerGravity*(settings.gravity-minGravity);
 console.log(`repeatRatePerGravity: ${repeatRatePerGravity}`);
 console.log(`dropRepeatRate: ${dropRepeatRate}`);
+
+/*
+Todo
+
+ - Basic Tetris -
+Add softDrop
+Add hardDrop
+Add leniency
+Add STS
+Make hold visible
+Make next pieces visible
+Make a start/pause button
+Make 0 gravity stop the pieces from falling
+Make settings tab
+
+ - Finesse Trainer -
+ 4*7*10 = 280 possible options
+Make object with all possible piece placements and the best keystrokes needed to put that piece there / A way to calculate best keystrokes per option
+Make selection screen with all possible piece placements / Just a piece selection screen with a way to select option by moving piece to that specific position and rotation
+ */
