@@ -203,7 +203,6 @@ $(document).ready(function(){
     }
 
     function tryPosition(x,y,rotation) {
-        console.log(`trying position ${activeTetromino.x+x},${activeTetromino.y+y} with piece ${activeTetromino.tetromino} at rotation ${rotation}`)
         return !(checkCollision("all",activeTetromino.x+x,activeTetromino.y+y,activeTetromino.tetromino,rotation))
     }
 
@@ -225,9 +224,7 @@ $(document).ready(function(){
             case "0-3": rotation = 7; break;
         }
         let neededSrsData = SrsData.find(el => el.name.includes(activeTetromino.tetromino)).rotations[rotation];
-        console.log(neededSrsData);
         for (let i=0;i<5;i++) {
-            console.log(neededSrsData[i][0]+","+neededSrsData[i][1]);
             if (tryPosition(neededSrsData[i][0],neededSrsData[i][1],virtRotate(activeTetromino.rotation,direction))) {
                 activeTetromino.x += neededSrsData[i][0];
                 activeTetromino.y += neededSrsData[i][1];
@@ -235,7 +232,6 @@ $(document).ready(function(){
                 return;
             }
         }
-        console.log('no possible options found!');
     }
 
     let down = [];
@@ -389,30 +385,32 @@ $(document).ready(function(){
     }
 
     function startInterval() {
-        gameTick = setInterval(function () {
-            if (checkCollision("down")) {
-                if (settings.leniency) {
-                    if (tup === null) {
-                        startTimeout();
-                    }
-                    if (tudp === null) {
-                        tudp = setTimeout(function () {
-                            clearInterval(tup);
-                            if (checkCollision("down")) {
-                                placeTetromino();
-                            } else {
-                                tudp = null;
-                            }
-                        }, settings.tudp);
+        if (settings.gravity !== 0) {
+            gameTick = setInterval(function () {
+                if (checkCollision("down")) {
+                    if (settings.leniency) {
+                        if (tup === null) {
+                            startTimeout();
+                        }
+                        if (tudp === null) {
+                            tudp = setTimeout(function () {
+                                clearInterval(tup);
+                                if (checkCollision("down")) {
+                                    placeTetromino();
+                                } else {
+                                    tudp = null;
+                                }
+                            }, settings.tudp);
+                        }
+                    } else {
+                        placeTetromino();
                     }
                 } else {
-                    placeTetromino();
+                    activeTetromino.y--;
                 }
-            } else {
-                activeTetromino.y--;
-            }
-            render();
-        }, dropRepeatRate)
+                render();
+            }, dropRepeatRate)
+        }
     }
 
     function startGame() {
@@ -420,31 +418,7 @@ $(document).ready(function(){
         if (gameTick !== null) {
             clearInterval(gameTick);
         }
-        passiveBlocks = [{
-            x: 4,
-            y: 1,
-            color : "#ffffff"
-        },{
-            x: 3,
-            y: 2,
-            color : "#ffffff"
-        },{
-            x: 6,
-            y: 2,
-            color : "#ffffff"
-        },{
-            x: 7,
-            y: 1,
-            color : "#ffffff"
-        },{
-            x: 6,
-            y: 3,
-            color : "#ffffff"
-        },{
-            x: 3,
-            y: 3,
-            color : "#ffffff"
-        }];
+        passiveBlocks = [];
         hold = null;
 
         nextPieces = [];

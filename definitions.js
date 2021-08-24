@@ -167,7 +167,7 @@ let settings = {
         Sega Rotation System
         DTET Rotation System
          */
-    leniency: true,
+    leniency: false,
         tup: 500, //Time until placed when not moving the piece
         tudp: 2000, //Time until piece is placed no matter what
     ghostPiece: true,
@@ -201,7 +201,7 @@ let settings = {
 // My personal settings
 settings.das = 100;
 settings.arr = 30;
-settings.gravity = 1;
+settings.gravity = 0;
 settings.sds = 0;
 settings.tudp = 999999;
 //
@@ -216,7 +216,7 @@ let maxGravity = 20;
 let originalDropRepeatRate;
 
 if (settings.repeatRate === null) {
-    if (settings.gravity > maxGravity || settings.gravity < minGravity) throw "Invalid gravity";
+    if (settings.gravity !== 0 && (settings.gravity > maxGravity || settings.gravity < minGravity)) throw "Invalid gravity";
     let repeatRatePerGravity = (maxRepeatRate - minRepeatRate) / (maxGravity - minGravity);
     originalDropRepeatRate = maxRepeatRate;
     originalDropRepeatRate -= repeatRatePerGravity * (settings.gravity - minGravity);
@@ -231,7 +231,6 @@ Todo
 Make hold visible
 Make next pieces visible
 Make a start/pause button
-Make 0 gravity stop the pieces from falling
 Make settings tab
 Add other bagtype options
 Add other Rotation System options
@@ -250,6 +249,7 @@ Burn amount
 Levels
 Recognise other piece spins
 Recognise combo
+Option to wrap around the board
 
 Customisable death cause
     - Not being able to place tetromino
