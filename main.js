@@ -212,6 +212,10 @@ $(document).ready(function(){
                     das(keycode,function(){
                         if (checkCollision("right")) return;
                         activeTetromino.x++;
+                        if (tup !== null) {
+                            clearTimeout(tup);
+                            startTimeout();
+                        }
                         render();
                         clearTimeout(timeout[settings.controls.moveLeft]);
                         clearInterval(interval[settings.controls.moveLeft]);
@@ -221,6 +225,10 @@ $(document).ready(function(){
                     das(keycode,function(){
                         if (checkCollision("left")) return;
                         activeTetromino.x--;
+                        if (tup !== null) {
+                            clearTimeout(tup);
+                            startTimeout();
+                        }
                         render();
                         clearTimeout(timeout[settings.controls.moveRight]);
                         clearInterval(interval[settings.controls.moveRight]);
@@ -259,7 +267,9 @@ $(document).ready(function(){
                     while (!checkCollision("down")) {
                         activeTetromino.y--;
                     }
-                    placeBlock();
+                    clearTimeout(tup);
+                    clearTimeout(tudp);
+                    placeTetromino();
                     break;
             }
             render();
@@ -283,6 +293,8 @@ $(document).ready(function(){
 
     let nextPieces;
     let gameTick;
+    let tup = null;
+    let tudp = null;
 
     function spawnNextPiece() {
         if (!checkCollision("all", spawnPosX, spawnPosY, numberToTetromino(nextPieces[0]), 0)) {
@@ -312,7 +324,7 @@ $(document).ready(function(){
         startInterval();
     }
 
-    function placeBlock() {
+    function placeTetromino() {
         let activeBlocks = blocksFromTetromino(activeTetromino.x, activeTetromino.y, activeTetromino.tetromino, activeTetromino.rotation);
         const color = tetrominoes.find(el => el.name === activeTetromino.tetromino).color;
         //Add all blocks of active Tetromino to passiveBlocks array
@@ -354,19 +366,39 @@ $(document).ready(function(){
             case 4: console.log("Tetris!");
                 break;
         }
-
+        tup = null;
+        tudp = null;
         spawnNextPiece();
     }
 
     function startInterval() {
-        gameTick = setInterval(function () {
-            if (checkCollision("down")) {
-                placeBlock();
-            } else {
-                activeTetromino.y--;
-            }
-            render();
-        }, dropRepeatRate)
+                gameTick = setInterval(function () {
+                    if (checkCollision("down")) {
+                        if (settings.leniency) {
+                            if (tup === null) {
+                                startTimeout();
+                            }
+                            if (tudp === null) {
+                                tudp = setTimeout(function () {
+                                    clearInterval(tup);
+                                    placeTetromino();
+                                }, settings.tudp);
+                            }
+                        } else {
+                            placeTetromino();
+                        }
+                    } else {
+                        activeTetromino.y--;
+                    }
+                    render();
+                }, dropRepeatRate)
+    }
+
+    function startTimeout() {
+        tup = setTimeout(function(){
+            clearInterval(tudp);
+            placeTetromino();
+        },settings.tup);
     }
 
     $(document).keydown(function (e) {

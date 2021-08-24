@@ -82,11 +82,17 @@ function hexToRgbA(hex,opacity = 100){
     throw new Error('Bad Hex');
 }
 
+let gameRunning = false;
+
 let passiveBlocks = [];
-let tmp = null;
-let hold = null;
+const spawnPosX = 6;
+const spawnPosY = 19;
 let activeTetromino = null;
 let ghostTetromino = null;
+
+let tmp = null;
+let hold = null;
+let held = false;
 
 const w=400;
 const h=800;
@@ -99,6 +105,7 @@ let settings = {
     arr: 31,
     sdf: 30,
     gravity: 1,
+    repeatRate: null,
     leniency: true,
         tup: 500, //Time until placed when not moving the piece
         tudp: 2000, //Time until piece is placed no matter what
@@ -129,36 +136,32 @@ let settings = {
     }
 }
 
-let minRepeatRate = 25;
-let maxRepeatRate = 1000;
-let minGravity = 1;
-let maxGravity = 20;
-
-// My preferred settings
+// My personal settings
 settings.das = 100;
 settings.arr = 0;
 settings.gravity = 1;
 //
 
-if (settings.gravity > maxGravity || settings.gravity < minGravity) {
-    throw "Invalid gravity";
+let minRepeatRate = 25;
+let maxRepeatRate = 1000;
+let minGravity = 1;
+let maxGravity = 20;
+let originalDropRepeatRate;
+
+if (settings.repeatRate === null) {
+    if (settings.gravity > maxGravity || settings.gravity < minGravity) throw "Invalid gravity";
+    let repeatRatePerGravity = (maxRepeatRate - minRepeatRate) / (maxGravity - minGravity);
+    originalDropRepeatRate = maxRepeatRate;
+    originalDropRepeatRate -= repeatRatePerGravity * (settings.gravity - minGravity);
+} else {
+    originalDropRepeatRate = settings.repeatRate;
 }
-let repeatRatePerGravity = (maxRepeatRate-minRepeatRate)/(maxGravity-minGravity);
-let originalDropRepeatRate = maxRepeatRate;
-originalDropRepeatRate -= repeatRatePerGravity*(settings.gravity-minGravity);
-
 let dropRepeatRate = originalDropRepeatRate;
-
-let gameRunning = false;
-let spawnPosX = 6;
-let spawnPosY = 19;
-let held = false;
 
 /*
 Todo
 
  - Basic Tetris -
-Add leniency
 Add STS
 Make hold visible
 Make next pieces visible
