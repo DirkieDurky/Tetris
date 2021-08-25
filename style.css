@@ -3,7 +3,7 @@ body {
     margin: 0;
 }
 
-.container {
+#container {
     position: absolute;
     display: flex;
     transform: translate(-50%);

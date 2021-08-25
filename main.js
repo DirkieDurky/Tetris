@@ -1,44 +1,60 @@
 $(document).ready(function(){
-    const canvas = document.getElementById("playField");
-    const ctx = canvas.getContext("2d");
-
     const playField = document.getElementById("playField");
+    const pfCtx = playField.getContext("2d");
+
     const holdBox = document.getElementById("holdBox");
+    const hbCtx = holdBox.getContext("2d");
+
     const nextBox = document.getElementById("nextBox");
+    const nbCtx = nextBox.getContext("2d");
+
     playField.setAttribute("width",w+"px");
     playField.setAttribute("height",h+"px");
     playField.style.width = w+"px";
     playField.style.height = h+"px";
 
+    holdBox.setAttribute("width",holdW+"px");
+    holdBox.setAttribute("height",holdH+"px");
     holdBox.style.width = holdW+"px";
     holdBox.style.height = holdH+"px";
 
+    nextBox.setAttribute("width",nextW+"px");
+    nextBox.setAttribute("height",nextH+"px");
     nextBox.style.width = nextW+"px";
     nextBox.style.height = nextH+"px";
 
+    //Center everything exactly
+    const container = document.getElementById("container");
+    if (holdBox.style.width > nextBox.style.width) {
+        container.style.left = "calc(50% - "+(parseInt(holdBox.style.width)-parseInt(nextBox.style.width))/2+"px)";
+
+    } else {
+        container.style.left = "calc(50% + "+(parseInt(nextBox.style.width)-parseInt(holdBox.style.width))/2+"px)";
+    }
+
     //Make grid
     for (let i=0;i<w;i=i+(w/settings.gridWidth)) {
-        ctx.moveTo(i,0);
-        ctx.lineTo(i,h);
+        pfCtx.moveTo(i,0);
+        pfCtx.lineTo(i,h);
     }
     for (let j=0;j<h;j=j+h/settings.gridHeight) {
-        ctx.moveTo(0,j);
-        ctx.lineTo(w,j);
+        pfCtx.moveTo(0,j);
+        pfCtx.lineTo(w,j);
     }
 
-    ctx.strokeStyle="#7d7d7d";
-    ctx.lineWidth=1;
-    ctx.stroke();
+    pfCtx.strokeStyle="#7d7d7d";
+    pfCtx.lineWidth=1;
+    pfCtx.stroke();
 
-    function clearCanvas() {
+    function clearCanvas(ctx,canvas) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.stroke();
     }
 
     function drawBlock(x,y,color,opacity = 100){
-        ctx.fillStyle = hexToRgbA(color,opacity);
+        pfCtx.fillStyle = hexToRgbA(color,opacity);
         y = invert(y,1,settings.gridHeight);
-        ctx.fillRect((w/settings.gridWidth)*(x-1),(h/settings.gridHeight*(y-1)),w/settings.gridWidth,h/settings.gridHeight);
+        pfCtx.fillRect((w/settings.gridWidth)*(x-1),(h/settings.gridHeight*(y-1)),w/settings.gridWidth,h/settings.gridHeight);
     }
 
     function drawTetromino(x,y,tetromino,rotation,color,opacity = 100){
@@ -65,6 +81,72 @@ $(document).ready(function(){
             color,opacity);
     }
 
+    function drawBlockHold(x,y,color) {
+        hbCtx.fillStyle = color;
+        y = invert(y,1,holdGridH);
+        hbCtx.fillRect((holdW/holdGridW)*x,(holdH/holdGridH*y), holdW/holdGridW,holdH/holdGridH);
+    }
+
+    function renderHold() {
+        clearCanvas(hbCtx,holdBox);
+        if (hold !== null) {
+            let tetrominoData = tetrominoes.find(el => el.name === hold);
+            const tetrominoRotation = tetrominoData.rotations[0];
+            const offsetX = 3;
+            const offsetY = 4;
+            let tetrominoOffsetX = 0;
+            let tetrominoOffsetY = 0;
+
+            let color;
+            if (held) {
+                color = settings.heldColor
+            } else {
+                color = tetrominoData.color;
+            }
+
+            switch (hold) {
+                case "I":
+                    tetrominoOffsetY = 0.5;
+                case "O":
+                    tetrominoOffsetX = -.5
+                    break;
+            }
+
+            drawBlockHold(offsetX + tetrominoOffsetX + tetrominoRotation.block1x,
+                offsetY + tetrominoOffsetY + tetrominoRotation.block1y,
+                color);
+            drawBlockHold(offsetX + tetrominoOffsetX + tetrominoRotation.block2x,
+                offsetY + tetrominoOffsetY + tetrominoRotation.block2y,
+                color);
+            drawBlockHold(offsetX + tetrominoOffsetX + tetrominoRotation.block3x,
+                offsetY + tetrominoOffsetY + tetrominoRotation.block3y,
+                color);
+            drawBlockHold(offsetX + tetrominoOffsetX + tetrominoRotation.block4x,
+                offsetY + tetrominoOffsetY + tetrominoRotation.block4y,
+                color);
+            hbCtx.stroke();
+        }
+    }
+
+    function render() {
+        clearCanvas(pfCtx,playField);
+
+        //Get ghost piece position
+        if (settings.ghostPiece) {
+            ghostTetromino = {
+                y: activeTetromino.y,
+            }
+            while (!checkCollision("down", activeTetromino.x, ghostTetromino.y, activeTetromino.tetromino, activeTetromino.rotation)) {
+                ghostTetromino.y--;
+            }
+            drawTetromino(activeTetromino.x, ghostTetromino.y, activeTetromino.tetromino, activeTetromino.rotation, settings.ghostPieceColor, settings.ghostPieceOpacity);
+        }
+        drawTetromino(activeTetromino.x,activeTetromino.y,activeTetromino.tetromino,activeTetromino.rotation);
+        for (let i=0;i<passiveBlocks.length;i++) {
+            drawBlock(passiveBlocks[i].x,passiveBlocks[i].y,passiveBlocks[i].color);
+        }
+    }
+
     function numberToTetromino(number) {
         switch (number) {
             case 1: return "I";
@@ -89,27 +171,7 @@ $(document).ready(function(){
             tetromino: tetromino,
             rotation: 0
         }
-
         render();
-    }
-
-    function render() {
-        clearCanvas();
-
-        //Get ghost piece position
-        if (settings.ghostPiece) {
-            ghostTetromino = {
-                y: activeTetromino.y,
-            }
-            while (!checkCollision("down", activeTetromino.x, ghostTetromino.y, activeTetromino.tetromino, activeTetromino.rotation)) {
-                ghostTetromino.y--;
-            }
-            drawTetromino(activeTetromino.x, ghostTetromino.y, activeTetromino.tetromino, activeTetromino.rotation, settings.ghostPieceColor, settings.ghostPieceOpacity);
-        }
-        drawTetromino(activeTetromino.x,activeTetromino.y,activeTetromino.tetromino,activeTetromino.rotation);
-        for (let i=0;i<passiveBlocks.length;i++) {
-            drawBlock(passiveBlocks[i].x,passiveBlocks[i].y,passiveBlocks[i].color);
-        }
     }
 
     function virtRotate(rotation, direction) {
@@ -363,6 +425,7 @@ $(document).ready(function(){
                         held = true;
                         if (hold == null) {
                             hold = activeTetromino.tetromino;
+                            renderHold();
                             activeTetromino = null;
                             spawnNextPiece();
                         } else {
@@ -370,6 +433,7 @@ $(document).ready(function(){
                             activeTetromino = null;
                             spawnTetromino(hold);
                             hold = tmp;
+                            renderHold();
                             tmp = null;
                         }
                     }
@@ -502,16 +566,10 @@ $(document).ready(function(){
         if (gameTick !== null) {
             clearInterval(gameTick);
         }
-        passiveBlocks = [{
-            x: 5,
-            y: 10,
-            color: "#ffffff"
-        },{
-            x: 6,
-            y: 10,
-            color: "#ffffff"
-        }];
+        passiveBlocks = [];
+        held = false;
         hold = null;
+        renderHold();
 
         nextPieces = [];
         for (let i=0;i<6;i++) {
@@ -520,6 +578,8 @@ $(document).ready(function(){
 
         startInterval();
         spawnTetromino(nextPieces[0]);
+        nextPieces.splice(0,1);
+        nextPieces.push(Math.floor(Math.random() * tetrominoes.length + 1));
     }
 
     function blockAtPos(x,y) {
@@ -558,7 +618,7 @@ $(document).ready(function(){
             }
         }
 
-        //Check for line clear
+        //Clear lines if applicable
         let line;
         let lineAmount = 0;
         for (let i=0;i<settings.gridHeight;i++) {
@@ -602,6 +662,9 @@ $(document).ready(function(){
                     console.log("T-Spin");
                 }
         }
+
+        //Check for All clears
+        if (passiveBlocks.length === 0) console.log("All clear!");
         tup = null;
         tudp = null;
         spawnNextPiece();
@@ -611,10 +674,10 @@ $(document).ready(function(){
             clearInterval(softDrop);
             softDropHeld = false;
         } else {
-            console.log('soft dropping if button is held down');
             softDrop();
         }
         held = false;
+        renderHold();
     }
 
     function startTimeout() {
@@ -633,7 +696,8 @@ $(document).ready(function(){
 
         switch (keycode) {
             case 68:
-                console.log(nextPieces);
+                // console.log(nextPieces);
+                console.log(held);
                 break;
         }
     })

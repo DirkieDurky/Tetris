@@ -182,6 +182,7 @@ let settings = {
         tudp: 2000, //Time until piece is placed no matter what
     ghostPiece: true,
     ghostPieceColor: "#7d7d7d",
+    heldColor: "#7d7d7d", //Color of the hold piece if you cant use the hold anymore this turn
         /*Options:
         Custom color
         Same as Tetromino
@@ -220,8 +221,10 @@ settings.gridWidth = 10;
 
 const h = settings.gridHeight*settings.blockSize;
 const w = settings.gridWidth*settings.blockSize;
-const holdW = 4*settings.blockSize;
-const holdH = 4*settings.blockSize;
+const holdGridW = 5;
+const holdGridH = 4;
+const holdW = holdGridW*settings.blockSize;
+const holdH = holdGridH*settings.blockSize;
 const nextW = 4*settings.blockSize;
 const nextH = 3*settings.blockSize*settings.nextAmount;
 
@@ -244,7 +247,6 @@ let dropRepeatRate = originalDropRepeatRate;
 /*
 Todo
  - Basic Tetris -
- Make hold visible
  Make next pieces visible
  Make a start/pause button
  Make settings tab
@@ -279,4 +281,5 @@ Todo
  Workshop with all custom made things
  Undo option
  Multiple holds
+ Finesse beeper
 */
