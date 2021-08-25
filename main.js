@@ -2,11 +2,19 @@ $(document).ready(function(){
     const canvas = document.getElementById("playField");
     const ctx = canvas.getContext("2d");
 
-    document.getElementById("playField").setAttribute("width",w+"px");
-    document.getElementById("playField").setAttribute("height",h+"px");
+    const playField = document.getElementById("playField");
+    const holdBox = document.getElementById("holdBox");
+    const nextBox = document.getElementById("nextBox");
+    playField.setAttribute("width",w+"px");
+    playField.setAttribute("height",h+"px");
+    playField.style.width = w+"px";
+    playField.style.height = h+"px";
 
-    document.getElementById("holdBox").setAttribute("width",holdW+"px");
-    document.getElementById("holdBox").setAttribute("height",holdH+"px");
+    holdBox.style.width = holdW+"px";
+    holdBox.style.height = holdH+"px";
+
+    nextBox.style.width = nextW+"px";
+    nextBox.style.height = nextH+"px";
 
     //Make grid
     for (let i=0;i<w;i=i+(w/settings.gridWidth)) {
@@ -472,7 +480,15 @@ $(document).ready(function(){
         if (gameTick !== null) {
             clearInterval(gameTick);
         }
-        passiveBlocks = [];
+        passiveBlocks = [{
+            x: 5,
+            y: 10,
+            color: "#ffffff"
+        },{
+            x: 6,
+            y: 10,
+            color: "#ffffff"
+        }];
         hold = null;
 
         nextPieces = [];

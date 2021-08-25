@@ -21,16 +21,16 @@ class Rotation {
 
 const tetrominoes = [
     new Tetromino("I","#009ad6", [
-        new Rotation(-2,0,-1, 0, 0, 0, 1, 0),
-        new Rotation(0, 1, 0, 0, 0, -1, 0, -2,),
-        new Rotation(-2, -1, -1, -1, 0, -1, 1, -1),
-        new Rotation(-1, 1, -1, 0, -1, -1, -1, -2,)
+        new Rotation(-2,-1,-1, -1, 0, -1, 1, -1),
+        new Rotation(0, 0, 0, -1, 0, -2, 0, -3,),
+        new Rotation(-2, -2, -1, -2, 0, -2, 1, -2),
+        new Rotation(-1, 0, -1, -1, -1, -2, -1, -3,)
     ]),
     new Tetromino("J","#213cc3", [
-        new Rotation(-2,1,-2,0,-1,0,0,0),
-        new Rotation(-1,1,0,1,-1,0,-1,-1),
-        new Rotation(-2,0,-1,0,0,0,0,-1),
-        new Rotation(-1,1,-1,0,-1,-1,-2,-1)
+        new Rotation(-2,0,-2,-1,-1,-1,0,-1),
+        new Rotation(-1,0,0,0,-1,-1,-1,-2),
+        new Rotation(-2,-1,-1,-1,0,-1,0,-2),
+        new Rotation(-1,0,-1,-1,-1,-2,-2,-2)
     ]),
     new Tetromino("L","#e85b00", [
         new Rotation(0,0,-2,-1,-1,-1,0,-1),
@@ -124,6 +124,19 @@ function hexToRgbA(hex,opacity = 100){
     throw new Error('Bad Hex');
 }
 
+function numberToTetromino(number) {
+    switch (number) {
+        case 1: return "I";
+        case 2: return "J";
+        case 3: return "L";
+        case 4: return "T";
+        case 5: return "S";
+        case 6: return "Z";
+        case 7: return "O";
+        default: throw "Enter valid number";
+    }
+}
+
 let gameRunning = false;
 
 let passiveBlocks = [];
@@ -148,6 +161,8 @@ let settings = {
     spawnPosX: 6,
     spawnPosY: 19,
 
+    nextAmount: 6,
+    //Amount of Next pieces
     gravity: 1,
     repeatRate: null,
     RotationSystem: "SRS",
@@ -196,16 +211,19 @@ let settings = {
 
 // My personal settings
 settings.das = 100;
-settings.arr = 0;
+settings.arr = 31;
 settings.gravity = 0;
 settings.sds = 0;
 settings.tudp = 999999999;
+settings.gridWidth = 10;
 //
 
 const h = settings.gridHeight*settings.blockSize;
 const w = settings.gridWidth*settings.blockSize;
-const holdH = 4*settings.blockSize;
 const holdW = 4*settings.blockSize;
+const holdH = 4*settings.blockSize;
+const nextW = 4*settings.blockSize;
+const nextH = 3*settings.blockSize*settings.nextAmount;
 
 let minRepeatRate = 25;
 let maxRepeatRate = 1000;
@@ -226,6 +244,7 @@ let dropRepeatRate = originalDropRepeatRate;
 /*
 Todo
  - Basic Tetris -
+ Fix softDrop cancelled at sds 0 when rotating or moving while holding softDrop
  Make hold visible
  Make next pieces visible
  Make a start/pause button
