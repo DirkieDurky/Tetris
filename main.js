@@ -288,6 +288,7 @@ $(document).ready(function(){
                 clearInterval(interval[settings.controls.moveLeft]);
         }
     }
+    let softDropHeld = false;
     let heldSide = [];
     function das(keycode, toExecute) {
         toExecute();
@@ -305,52 +306,58 @@ $(document).ready(function(){
     }
 
     $(document).keydown(function (e) {
-            let keycode = (e.keyCode ? e.keyCode : e.which);
-            if (down.includes(keycode)) return;
-            down.push(keycode);
+        let keycode = (e.keyCode ? e.keyCode : e.which);
+        if (down.includes(keycode)) return;
+        down.push(keycode);
 
-            if (tup !== null) {
-                clearTimeout(tup);
-                startTimeout();
-            }
+        if (tup !== null) {
+            clearTimeout(tup);
+            startTimeout();
+        }
 
+        function keyPressed() {
             switch (keycode) {
                 case settings.controls.moveRight:
-                    das(keycode,function(){
+                    das(keycode, function () {
                         if (checkCollision("right")) return;
                         activeTetromino.x++;
                         render();
                         clearTimeout(timeout[settings.controls.moveLeft]);
                         clearInterval(interval[settings.controls.moveLeft]);
                     }, "right");
-                    break;
+                    softDrop();
+                    return true;
                 case settings.controls.moveLeft:
-                    das(keycode,function(){
+                    das(keycode, function () {
                         if (checkCollision("left")) return;
                         activeTetromino.x--;
                         render();
                         clearTimeout(timeout[settings.controls.moveRight]);
                         clearInterval(interval[settings.controls.moveRight]);
                     }, "left");
-                    break;
+                    softDrop();
+                    return true;
                 case settings.controls.rotateCCW:
                     rotate("ccw");
                     if (heldSide.length !== 0) {
                         moveInstantly(heldSide[0])
                     }
-                    break;
+                    softDrop();
+                    return true;
                 case settings.controls.rotateCW:
                     rotate("cw");
                     if (heldSide.length !== 0) {
                         moveInstantly(heldSide[0])
                     }
-                    break;
+                    softDrop();
+                    return true;
                 case settings.controls.rotate180:
                     rotate("180");
                     if (heldSide.length !== 0) {
                         moveInstantly(heldSide[0])
                     }
-                    break;
+                    softDrop();
+                    return true;
                 case settings.controls.hold:
                     if (!held) {
                         held = true;
@@ -366,7 +373,8 @@ $(document).ready(function(){
                             tmp = null;
                         }
                     }
-                    break;
+                    softDrop();
+                    return true;
                 case settings.controls.softDrop:
                     if (settings.sds !== 0) {
                         softDrop = setInterval(function () {
@@ -380,26 +388,36 @@ $(document).ready(function(){
                             render();
                         }, settings.sds);
                     } else {
-                        while (!checkCollision("down")) {
-                            activeTetromino.y--;
-                        }
-                        clearInterval(gameTick);
-                        startInterval();
-                        render();
+                        softDropHeld = true;
+                        softDrop();
                     }
-                    break;
+                    return true;
                 case settings.controls.hardDrop:
                     while (!checkCollision("down")) {
                         activeTetromino.y--;
                     }
                     placeTetromino();
-                    break;
+                    return true;
                 case settings.controls.restart:
                     startGame();
-                    break;
+                    return true;
             }
+        }
+        if (keyPressed()) {
             render();
+        }
     })
+
+    function softDrop() {
+        if (softDropHeld) {
+            while (!checkCollision("down")) {
+                activeTetromino.y--;
+            }
+            clearInterval(gameTick);
+            startInterval();
+            render();
+        }
+    }
 
     $(document).keyup(function(e){
         const keycode = (e.keyCode ? e.keyCode : e.which);
@@ -412,7 +430,11 @@ $(document).ready(function(){
 
         switch (keycode) {
             case settings.controls.softDrop:
-                clearInterval(softDrop);
+                if (settings.sds !== 0) {
+                    clearInterval(softDrop);
+                } else {
+                    softDropHeld = false;
+                }
                 break;
             case settings.controls.moveLeft:
             case settings.controls.moveRight:
@@ -549,11 +571,6 @@ $(document).ready(function(){
                 //Move all blocks above line down by 1
                 passiveBlocks.filter(el => el.y > i).forEach(el => el.y--);
             }
-            //Remove softDrop when piece placed
-            if (settings.rswpp) {
-                clearInterval(softDrop);
-            }
-            held = false;
         }
 
         switch (lineAmount) {
@@ -588,6 +605,16 @@ $(document).ready(function(){
         tup = null;
         tudp = null;
         spawnNextPiece();
+
+        //Remove softDrop when piece placed
+        if (settings.rswpp) {
+            clearInterval(softDrop);
+            softDropHeld = false;
+        } else {
+            console.log('soft dropping if button is held down');
+            softDrop();
+        }
+        held = false;
     }
 
     function startTimeout() {

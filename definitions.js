@@ -244,7 +244,6 @@ let dropRepeatRate = originalDropRepeatRate;
 /*
 Todo
  - Basic Tetris -
- Fix softDrop cancelled at sds 0 when rotating or moving while holding softDrop
  Make hold visible
  Make next pieces visible
  Make a start/pause button
