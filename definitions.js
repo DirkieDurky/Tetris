@@ -97,23 +97,9 @@ const SrsData = [{
 }
 ]
 
-/*
-"0-1":
-"1-2":
-"2-3":
-"3-0":
- */
 function invert(input, min, max) {
     let distance = input - min;
     return max - distance;
-}
-
-function negPos(int) {
-    if (int < 0) {
-        return Math.abs(int);
-    } else if (int > 0) {
-        return int-int*2;
-    } else return 0;
 }
 
 function hexToRgbA(hex,opacity = 100){
@@ -194,20 +180,23 @@ let settings = {
         rotateCCW: 88,
         rotateCW: 67,
         rotate180: 86,
-        hardDrop: 90
+        hardDrop: 90,
+        restart: 82
     }
 }
 
 // My personal settings
 settings.das = 100;
-settings.arr = 30;
+settings.arr = 0;
 settings.gravity = 0;
 settings.sds = 0;
-settings.tudp = 999999;
+settings.tudp = 999999999;
 //
 
 const h = settings.gridHeight*settings.blockSize;
 const w = settings.gridWidth*settings.blockSize;
+const holdH = 4*settings.blockSize;
+const holdW = 4*settings.blockSize;
 
 let minRepeatRate = 25;
 let maxRepeatRate = 1000;
@@ -228,30 +217,40 @@ let dropRepeatRate = originalDropRepeatRate;
 /*
 Todo
  - Basic Tetris -
-Make hold visible
-Make next pieces visible
-Make a start/pause button
-Make settings tab
-Add other bagtype options
-Add other Rotation System options
+ Fix bug where T-Spin wont get recognised
+ Make hold visible
+ Make next pieces visible
+ Make a start/pause button
+ Make settings tab
+ Add other bagtype options
+ Add other Rotation System options
 
+Todo
  - Finesse Trainer -
  4*7*10 = 280 possible options
-Make object with all possible piece placements and the best keystrokes needed to put that piece there / A way to calculate best keystrokes per option
-Make selection screen with all possible piece placements / Just a piece selection screen with a way to select option by moving piece to that specific position and rotation
+ Make object with all possible piece placements and the best keystrokes needed to put that piece there / A way to calculate best keystrokes per option
+ Make selection screen with all possible piece placements / Just a piece selection screen with a way to select option by moving piece to that specific position and rotation
 
+Todo
  - Bonus -
-Score display
-Line count
-Tetromino count
-Tetris rate
-Burn amount
-Levels
-Recognise other piece spins
-Recognise combo
-Option to wrap around the board
-
-Customisable death cause
+ Score display
+ Line count
+ Tetromino count
+ Tetris rate
+ Burn amount
+ Levels
+ Recognise other piece spins
+ Recognise combo
+ Option to wrap around the board
+ Customisable death cause
     - Not being able to place tetromino
     - Block placed over specific height
+ Custom maps
+ Custom tetrominos
+ Custom Rotation systems
+ Custom block textures
+ Custom sounds
+ Workshop with all custom made things
+ Undo option
+ Multiple holds
 */

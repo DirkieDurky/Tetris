@@ -5,6 +5,28 @@ $(document).ready(function(){
     document.getElementById("playField").setAttribute("width",w+"px");
     document.getElementById("playField").setAttribute("height",h+"px");
 
+    document.getElementById("holdBox").setAttribute("width",holdW+"px");
+    document.getElementById("holdBox").setAttribute("height",holdH+"px");
+
+    //Make grid
+    for (let i=0;i<w;i=i+(w/settings.gridWidth)) {
+        ctx.moveTo(i,0);
+        ctx.lineTo(i,h);
+    }
+    for (let j=0;j<h;j=j+h/settings.gridHeight) {
+        ctx.moveTo(0,j);
+        ctx.lineTo(w,j);
+    }
+
+    ctx.strokeStyle="#7d7d7d";
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.stroke();
+    }
+
     function drawBlock(x,y,color,opacity = 100){
         ctx.fillStyle = hexToRgbA(color,opacity);
         y = invert(y,1,settings.gridHeight);
@@ -33,25 +55,6 @@ $(document).ready(function(){
             x+tetrominoRotation.block4x,
             y+tetrominoRotation.block4y,
             color,opacity);
-    }
-
-    //Make grid
-    for (let i=0;i<w;i=i+(w/settings.gridWidth)) {
-        ctx.moveTo(i,0);
-        ctx.lineTo(i,h);
-    }
-    for (let j=0;j<h;j=j+h/settings.gridHeight) {
-        ctx.moveTo(0,j);
-        ctx.lineTo(w,j);
-    }
-
-    ctx.strokeStyle="#7d7d7d";
-    ctx.lineWidth=1;
-    ctx.stroke();
-
-    function clearCanvas() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.stroke();
     }
 
     function numberToTetromino(number) {
@@ -176,7 +179,7 @@ $(document).ready(function(){
             case "right":
                 activeBlocks = blocksFromTetromino(x+1,y,tetromino,rotation);
                 if (activeBlocks.block1x > settings.gridWidth || activeBlocks.block2x > settings.gridWidth || activeBlocks.block3x > settings.gridWidth || activeBlocks.block4x > settings.gridWidth ||
-                checkBlockCollision(x+1,y,tetromino,rotation)) return true;
+                    checkBlockCollision(x+1,y,tetromino,rotation)) return true;
                 break;
             case "rotateCw":
                 VirtRotation = virtRotate(rotation, "cw");
@@ -206,7 +209,7 @@ $(document).ready(function(){
         return !(checkCollision("all",activeTetromino.x+x,activeTetromino.y+y,activeTetromino.tetromino,rotation))
     }
 
-    function rotate(collisionMode, direction) {
+    function rotate(direction) {
         if (activeTetromino.tetromino === "O") return;
         //if (checkCollision(collisionMode)) return;
         //activeTetromino.rotation = virtRotate(activeTetromino.rotation,direction);
@@ -239,7 +242,36 @@ $(document).ready(function(){
     let interval = [];
     let rotationName;
 
-    function das(keycode, toExecute, side) {
+    function moveInstantly(keycode) {
+        let side;
+        switch (keycode) {
+            case settings.controls.moveLeft: side = "left";
+            break;
+            case settings.controls.moveRight: side = "right";
+            break;
+            default: throw "Invalid keycode";
+        }
+        while (!checkCollision(side)) {
+            switch (side) {
+                case "left": activeTetromino.x--;
+                break;
+                case "right": activeTetromino.x++;
+                break;
+            }
+        }
+        render();
+        switch (side) {
+            case "left":
+                clearTimeout(timeout[settings.controls.moveRight]);
+                clearInterval(interval[settings.controls.moveRight]);
+                break;
+            case "right":
+                clearTimeout(timeout[settings.controls.moveLeft]);
+                clearInterval(interval[settings.controls.moveLeft]);
+        }
+    }
+    let heldSide = [];
+    function das(keycode, toExecute) {
         toExecute();
         timeout[keycode] = setTimeout(function () {
             toExecute();
@@ -248,23 +280,8 @@ $(document).ready(function(){
                     toExecute();
                 }, settings.arr);
             } else {
-                if (side === "right") {
-                    while (!checkCollision("right")) {
-                        activeTetromino.x++;
-                    }
-                    render();
-                    clearTimeout(timeout[settings.controls.moveLeft]);
-                    clearInterval(interval[settings.controls.moveLeft]);
-                } else if (side === "left") {
-                    while (!checkCollision("left")) {
-                        activeTetromino.x--;
-                    }
-                    render();
-                    clearTimeout(timeout[settings.controls.moveRight]);
-                    clearInterval(interval[settings.controls.moveRight]);
-                } else {
-                    throw "Incorrect side";
-                }
+                if (!heldSide.includes(keycode)) heldSide.push(keycode);
+                moveInstantly(heldSide[0]);
             }
         }, settings.das);
     }
@@ -299,13 +316,22 @@ $(document).ready(function(){
                     }, "left");
                     break;
                 case settings.controls.rotateCCW:
-                    rotate("rotateCcw","ccw");
+                    rotate("ccw");
+                    if (heldSide.length !== 0) {
+                        moveInstantly(heldSide[0])
+                    }
                     break;
                 case settings.controls.rotateCW:
-                    rotate("rotateCw","cw");
+                    rotate("cw");
+                    if (heldSide.length !== 0) {
+                        moveInstantly(heldSide[0])
+                    }
                     break;
                 case settings.controls.rotate180:
-                    rotate("rotate180","180");
+                    rotate("180");
+                    if (heldSide.length !== 0) {
+                        moveInstantly(heldSide[0])
+                    }
                     break;
                 case settings.controls.hold:
                     if (!held) {
@@ -350,6 +376,9 @@ $(document).ready(function(){
                     }
                     placeTetromino();
                     break;
+                case settings.controls.restart:
+                    startGame();
+                    break;
             }
             render();
     })
@@ -363,8 +392,19 @@ $(document).ready(function(){
         clearTimeout(timeout[keycode]);
         clearInterval(interval[keycode]);
 
+        switch (keycode) {
+            case settings.controls.softDrop:
+                clearInterval(softDrop);
+                break;
+            case settings.controls.moveLeft:
+            case settings.controls.moveRight:
+                heldSide.splice(heldSide.indexOf(keycode));
+        }
         if (keycode === settings.controls.softDrop) {
             clearInterval(softDrop);
+        }
+        if (keycode === settings.controls.moveLeft) {
+
         }
     })
 
@@ -381,6 +421,10 @@ $(document).ready(function(){
         } else {
             clearInterval(gameTick);
             gameRunning = false;
+        }
+
+        if (heldSide.length !== 0) {
+            moveInstantly(heldSide[0])
         }
     }
 
@@ -538,8 +582,6 @@ $(document).ready(function(){
             case 68:
                 console.log(nextPieces);
                 break;
-            case 82:
-                startGame();
         }
     })
     startGame();
