@@ -206,13 +206,19 @@ $(document).ready(function(){
     }
 
     function tryPosition(x,y,rotation) {
+        // console.log(`Trying position ${activeTetromino.x+x},${activeTetromino.y+y} with tetromino ${activeTetromino.tetromino} at rotation ${rotation}...`)
         return !(checkCollision("all",activeTetromino.x+x,activeTetromino.y+y,activeTetromino.tetromino,rotation))
+        // if (checkCollision("all",activeTetromino.x+x,activeTetromino.y+y,activeTetromino.tetromino,rotation)) {
+        //     console.log('Not possible');
+        //     return false;
+        // } else {
+        //     console.log("Success!");
+        //     return true;
+        // }
     }
 
     function rotate(direction) {
         if (activeTetromino.tetromino === "O") return;
-        //if (checkCollision(collisionMode)) return;
-        //activeTetromino.rotation = virtRotate(activeTetromino.rotation,direction);
 
         rotationName = activeTetromino.rotation+"-"+virtRotate(activeTetromino.rotation,direction);
         let rotation;
@@ -225,9 +231,13 @@ $(document).ready(function(){
             case "3-2": rotation = 5; break;
             case "3-0": rotation = 6; break;
             case "0-3": rotation = 7; break;
+            case "0-2": rotation = 8; break;
+            case "2-0": rotation = 9; break;
+            case "1-3": rotation = 10; break;
+            case "3-1": rotation = 11; break;
         }
         let neededSrsData = SrsData.find(el => el.name.includes(activeTetromino.tetromino)).rotations[rotation];
-        for (let i=0;i<5;i++) {
+        for (let i=0;i<neededSrsData.length;i++) {
             if (tryPosition(neededSrsData[i][0],neededSrsData[i][1],virtRotate(activeTetromino.rotation,direction))) {
                 activeTetromino.x += neededSrsData[i][0];
                 activeTetromino.y += neededSrsData[i][1];
@@ -479,7 +489,7 @@ $(document).ready(function(){
     }
 
     function blockAtRelPos(x,y) {
-        return !!activeTetromino.x+x > settings.gridWidth || activeTetromino.x < 1 || activeTetromino.y > settings.gridHeight || activeTetromino.y < 1 ||
+        return !!activeTetromino.x+x > settings.gridWidth || activeTetromino.x+x < 1 || activeTetromino.y+y > settings.gridHeight || activeTetromino.y+y < 1 ||
             passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
     }
 
