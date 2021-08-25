@@ -155,13 +155,13 @@ let settings = {
     arr: 31,
     sds: 30,
 
-    gridHeight: 20,
-    gridWidth: 10,
+    pfGridH: 20,
+    pfGridW: 10,
     blockSize: 40,
     spawnPosX: 6,
     spawnPosY: 19,
 
-    nextAmount: 6,
+    nextAmount: 1,
     //Amount of Next pieces
     gravity: 1,
     repeatRate: null,
@@ -216,17 +216,19 @@ settings.arr = 31;
 settings.gravity = 0;
 settings.sds = 0;
 settings.tudp = 999999999;
-settings.gridWidth = 10;
+settings.pfGridW = 10;
 //
 
-const h = settings.gridHeight*settings.blockSize;
-const w = settings.gridWidth*settings.blockSize;
+const pfW = settings.pfGridW*settings.blockSize;
+const pfH = settings.pfGridH*settings.blockSize;
 const holdGridW = 5;
 const holdGridH = 4;
 const holdW = holdGridW*settings.blockSize;
 const holdH = holdGridH*settings.blockSize;
-const nextW = 4*settings.blockSize;
-const nextH = 3*settings.blockSize*settings.nextAmount;
+const nextGridW = 5;
+const nextGridH = 1+(3*settings.nextAmount);
+const nextW = nextGridW*settings.blockSize;
+const nextH = nextGridH*settings.blockSize;
 
 let minRepeatRate = 25;
 let maxRepeatRate = 1000;
@@ -247,11 +249,11 @@ let dropRepeatRate = originalDropRepeatRate;
 /*
 Todo
  - Basic Tetris -
- Make next pieces visible
+ Bug where some T-Spins arent recognised happening again?
+ Bug where holding softDrop doesnt do anything anymore after the first time with sds = 0 happening again?
  Make a start/pause button
+ Make a restart button
  Make settings tab
- Add other bagtype options
- Add other Rotation System options
 
 Todo
  - Finesse Trainer -
@@ -261,6 +263,8 @@ Todo
 
 Todo
  - Bonus -
+ Add other bagType options
+ Add other Rotation System options
  Score display
  Line count
  Tetromino count
