@@ -43,5 +43,3 @@ Todo
  Garbage
  Custom Tetromino color / texture
  Prevent accidental misdrops option
-
- Restart automatically after dying option

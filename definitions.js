@@ -142,6 +142,7 @@ let settings = {
     spawnPosY: 20,
 
     //Gameplay
+    autoRestart: false,
     hold: true,
     nextAmount: 6,
     //Amount of Next pieces
@@ -208,6 +209,7 @@ settings.spawnPosY = 21;
 settings.rswpp = true;
 settings.hold = true;
 settings.nextAmount = 6;
+settings.autoRestart = true;
 
 if (settings.nextAmount > 6) {
     throw "Max nextAmount is 6";

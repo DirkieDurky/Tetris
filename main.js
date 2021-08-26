@@ -619,8 +619,12 @@ $(document).ready(function(){
             clearInterval(gameTick);
             gameRunning = false;
             startButton.html("Start");
-            // noinspection JSUnresolvedVariable
-            restartButton.remove();
+            if (settings.autoRestart) {
+                startGame();
+            } else {
+                // noinspection JSUnresolvedVariable
+                restartButton.remove();
+            }
         }
 
         if (heldSide.length !== 0) {
@@ -799,9 +803,7 @@ $(document).ready(function(){
         },settings.tup);
     }
 
-    startButton.click(start);
-
-    function start(){
+    startButton.click(function (){
         if (!gameRunning) {
             startGame();
             startButton.html("Pause");
@@ -818,5 +820,7 @@ $(document).ready(function(){
                 startButton.html("Pause");
             }
         }
-    }
+    });
+
+
 })
