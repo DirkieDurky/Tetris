@@ -5,12 +5,13 @@ body {
 
 #container {
     position: absolute;
-    display: flex;
-    transform: translate(-50%);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    width: 100%;
     top: 40px;
     bottom: 30px;
-    left: 50%;
-    align-content: center;
+    justify-content: center;
+    gap: 20px;
 }
 
 #holdBox {
@@ -23,7 +24,6 @@ body {
     position: relative;
     top: 0;
     border: white solid 3px;
-    margin: 0 20px;
 }
 
 #nextBox {

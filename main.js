@@ -23,14 +23,21 @@ $(document).ready(function(){
     nextBox.style.width = nextW+"px";
     nextBox.style.height = nextH+"px";
 
-    //Center everything exactly
-    const container = document.getElementById("container");
-    if (holdBox.style.width > nextBox.style.width) {
-        container.style.left = "calc(50% - "+(parseInt(holdBox.style.width)-parseInt(nextBox.style.width))/2+"px)";
-
-    } else {
-        container.style.left = "calc(50% + "+(parseInt(nextBox.style.width)-parseInt(holdBox.style.width))/2+"px)";
+    if (!settings.hold) {
+        $("#holdBox").remove();
     }
+
+    if (settings.nextAmount < 1) {
+        $("#nextBox").remove();
+    }
+
+    //Center everything exactly
+    // const container = document.getElementById("container");
+    // if (holdBox.style.width > nextBox.style.width) {
+    //     container.style.left = "calc(50% - "+(parseInt(holdBox.style.width)-parseInt(nextBox.style.width))/2+"px)";
+    // } else {
+    //     container.style.left = "calc(50% + "+(parseInt(nextBox.style.width)-parseInt(holdBox.style.width))/2+"px)";
+    // }
 
     //Make grid
     for (let i=0; i<pfW; i=i+(pfW/settings.pfGridW)) {
@@ -211,7 +218,7 @@ $(document).ready(function(){
             case 5: return "S";
             case 6: return "Z";
             case 7: return "O";
-            default: throw "Enter valid number";
+            default: throw "Invalid number";
         }
     }
 
@@ -584,12 +591,22 @@ $(document).ready(function(){
     let gameTick;
     let tup = null;
     let tudp = null;
+    let nextTetromino;
 
     function spawnNextPiece() {
-        if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY, numberToTetromino(nextPieces[0]), 0)) {
-            spawnTetromino(nextPieces[0]);
-            nextPieces.splice(0,1);
-            nextPieces.push(Math.floor(Math.random() * tetrominoes.length + 1));
+        if (settings.nextAmount > 0) {
+            nextTetromino = numberToTetromino(nextPieces[0])
+        } else {
+            nextTetromino = numberToTetromino(Math.floor(Math.random() * tetrominoes.length + 1));
+        }
+        if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY, nextTetromino, 0)) {
+            if (settings.nextAmount > 0) {
+                spawnTetromino(nextPieces[0]);
+                nextPieces.splice(0, 1);
+                nextPieces.push(Math.floor(Math.random() * tetrominoes.length + 1));
+            } else {
+                spawnTetromino(nextTetromino);
+            }
             renderNext();
         } else {
             clearInterval(gameTick);
@@ -636,154 +653,6 @@ $(document).ready(function(){
             clearInterval(gameTick);
         }
         passiveBlocks = [];
-        // passiveBlocks = [{x: 2, y: 1, color: "#b32487"},
-        //     {x: 3, y: 1, color: "#b32487"},
-        // {x: 4, y: 1, color: "#b32487"},
-        // {x: 5, y: 1, color: "#4fb225"},
-        // {x: 5, y: 2, color: "#4fb225"},
-        // {x: 6, y: 1, color: "#009ad6"},
-        // {x: 7, y: 1, color: "#009ad6"},
-        // {x: 8, y: 1, color: "#009ad6"},
-        // {x: 9, y: 1, color: "#009ad6"},
-        // {x: 10, y: 1, color: "#4fb225"},
-        //  {x: 9, y: 2, color: "#4fb225"},
-        //  {x: 10, y: 2, color: "#4fb225"},
-        //  {x: 1, y: 3, color: "#009ad6"},
-        //  {x: 1, y: 2, color: "#009ad6"},
-        //  {x: 3, y: 2, color: "#dc0732"},
-        //  {x: 4, y: 2, color: "#dc0732"},
-        //  {x: 7, y: 2, color: "#e6a01a"},
-        //  {x: 8, y: 2, color: "#e6a01a"},
-        //  {x: 6, y: 2, color: "#b32487"},
-        //  {x: 7, y: 3, color: "#e6a01a"},
-        //  {x: 8, y: 3, color: "#e6a01a"},
-        //  {x: 4, y: 3, color: "#e85b00"},
-        //  {x: 2, y: 3, color: "#b32487"},
-        //  {x: 5, y: 3, color: "#e85b00"},
-        //  {x: 6, y: 3, color: "#e85b00"},
-        //  {x: 1, y: 5, color: "#009ad6"},
-        //  {x: 1, y: 4, color: "#009ad6"},
-        //  {x: 6, y: 4, color: "#213cc3"},
-        //  {x: 7, y: 4, color: "#213cc3"},
-        //  {x: 8, y: 4, color: "#213cc3"},
-        //  {x: 3, y: 4, color: "#e85b00"},
-        //  {x: 5, y: 4, color: "#213cc3"},
-        //  {x: 10, y: 3, color: "#b32487"},
-        //  {x: 9, y: 4, color: "#009ad6"},
-        //  {x: 9, y: 3, color: "#009ad6"},
-        //  {x: 2, y: 5, color: "#b32487"},
-        //  {x: 2, y: 4, color: "#b32487"},
-        //  {x: 3, y: 5, color: "#4fb225"},
-        //  {x: 4, y: 5, color: "#4fb225"},
-        //  {x: 6, y: 5, color: "#213cc3"},
-        //  {x: 8, y: 6, color: "#213cc3"},
-        //  {x: 8, y: 5, color: "#213cc3"},
-        //  {x: 7, y: 5, color: "#213cc3"},
-        //  {x: 9, y: 5, color: "#4fb225"},
-        //  {x: 10, y: 4, color: "#4fb225"},
-        //  {x: 4, y: 7, color: "#213cc3"},
-        //  {x: 4, y: 6, color: "#213cc3"},
-        //  {x: 3, y: 6, color: "#213cc3"},
-        //  {x: 9, y: 6, color: "#4fb225"},
-        //  {x: 10, y: 5, color: "#4fb225"},
-        //  {x: 6, y: 7, color: "#dc0732"},
-        //  {x: 5, y: 6, color: "#dc0732"},
-        //  {x: 7, y: 6, color: "#e85b00"},
-        //  {x: 2, y: 6, color: "#213cc3"},
-        //  {x: 8, y: 7, color: "#b32487"},
-        //  {x: 9, y: 7, color: "#e85b00"},
-        //  {x: 10, y: 7, color: "#e85b00"},
-        //  {x: 10, y: 6, color: "#e85b00"},
-        //  {x: 9, y: 8, color: "#e6a01a"},
-        //  {x: 10, y: 8, color: "#e6a01a"},
-        //  {x: 5, y: 7, color: "#4fb225"},
-        //  {x: 1, y: 7, color: "#009ad6"},
-        //  {x: 1, y: 6, color: "#009ad6"},
-        //  {x: 2, y: 7, color: "#e85b00"},
-        //  {x: 3, y: 8, color: "#009ad6"},
-        //  {x: 3, y: 7, color: "#009ad6"},
-        //  {x: 5, y: 8, color: "#4fb225"},
-        //  {x: 6, y: 8, color: "#4fb225"},
-        //  {x: 7, y: 8, color: "#4fb225"},
-        //  {x: 4, y: 8, color: "#b32487"},
-        //  {x: 8, y: 9, color: "#b32487"},
-        //  {x: 10, y: 9, color: "#009ad6"},
-        //  {x: 7, y: 9, color: "#e85b00"},
-        //  {x: 1, y: 8, color: "#e85b00"},
-        //  {x: 2, y: 8, color: "#e85b00"},
-        //  {x: 3, y: 9, color: "#009ad6"},
-        //  {x: 1, y: 9, color: "#e85b00"},
-        //  {x: 2, y: 9, color: "#e85b00"},
-        //  {x: 5, y: 9, color: "#4fb225"},
-        //  {x: 6, y: 9, color: "#4fb225"},
-        //  {x: 1, y: 10, color: "#e85b00"},
-        //  {x: 2, y: 10, color: "#dc0732"},
-        //  {x: 3, y: 10, color: "#dc0732"},
-        //  {x: 3, y: 11, color: "#dc0732"},
-        //  {x: 4, y: 9, color: "#213cc3"},
-        //  {x: 1, y: 11, color: "#009ad6"},
-        //  {x: 8, y: 10, color: "#b32487"},
-        //  {x: 9, y: 10, color: "#b32487"},
-        //  {x: 4, y: 10, color: "#213cc3"},
-        //  {x: 5, y: 10, color: "#dc0732"},
-        //  {x: 6, y: 10, color: "#dc0732"},
-        //  {x: 7, y: 10, color: "#213cc3"},
-        //  {x: 4, y: 11, color: "#e6a01a"},
-        //  {x: 5, y: 11, color: "#e6a01a"},
-        //  {x: 10, y: 11, color: "#b32487"},
-        //  {x: 8, y: 11, color: "#213cc3"},
-        //  {x: 7, y: 11, color: "#009ad6"},
-        //  {x: 2, y: 11, color: "#dc0732"},
-        //  {x: 6, y: 11, color: "#e85b00"},
-        //  {x: 2, y: 12, color: "#dc0732"},
-        // {x: 9, y: 12, color: "#4fb225"},
-        // {x: 3, y: 12, color: "#009ad6"},
-        // {x: 6, y: 12, color: "#e85b00"},
-        // {x: 4, y: 12, color: "#e85b00"},
-        // {x: 5, y: 12, color: "#e85b00"},
-        // {x: 7, y: 12, color: "#e85b00"},
-        // {x: 10, y: 12, color: "#e85b00"},
-        // {x: 4, y: 13, color: "#4fb225"},
-        // {x: 8, y: 14, color: "#4fb225"},
-        // {x: 8, y: 13, color: "#4fb225"},
-        // {x: 9, y: 13, color: "#4fb225"},
-        // {x: 1, y: 12, color: "#213cc3"},
-        // {x: 2, y: 13, color: "#dc0732"},
-        // {x: 4, y: 14, color: "#dc0732"},
-        // {x: 5, y: 14, color: "#dc0732"},
-        // {x: 5, y: 13, color: "#dc0732"},
-        // {x: 6, y: 13, color: "#dc0732"},
-        // {x: 2, y: 14, color: "#b32487"},
-        // {x: 3, y: 14, color: "#b32487"},
-        // {x: 3, y: 13, color: "#b32487"},
-        // {x: 1, y: 14, color: "#213cc3"},
-        // {x: 1, y: 13, color: "#213cc3"},
-        // {x: 7, y: 14, color: "#b32487"},
-        // {x: 9, y: 14, color: "#b32487"},
-        // {x: 4, y: 15, color: "#4fb225"},
-        // {x: 5, y: 15, color: "#4fb225"},
-        // {x: 10, y: 14, color: "#009ad6"},
-        // {x: 10, y: 13, color: "#009ad6"},
-        // {x: 6, y: 16, color: "#b32487"},
-        // {x: 6, y: 15, color: "#b32487"},
-        // {x: 7, y: 15, color: "#b32487"},
-        // {x: 2, y: 16, color: "#213cc3"},
-        // {x: 2, y: 15, color: "#213cc3"},
-        // {x: 8, y: 15, color: "#e85b00"},
-        // {x: 9, y: 15, color: "#e85b00"},
-        // {x: 10, y: 15, color: "#e85b00"},
-        // {x: 1, y: 17, color: "#213cc3"},
-        // {x: 2, y: 17, color: "#213cc3"},
-        // {x: 1, y: 16, color: "#213cc3"},
-        // {x: 1, y: 15, color: "#213cc3"},
-        // {x: 9, y: 17, color: "#e6a01a"},
-        // {x: 10, y: 17, color: "#e6a01a"},
-        // {x: 9, y: 16, color: "#e6a01a"},
-        // {x: 10, y: 16, color: "#e6a01a"},
-        // {x: 6, y: 18, color: "#4fb225"},
-        // {x: 7, y: 18, color: "#4fb225"},
-        // {x: 5, y: 17, color: "#4fb225"},
-        // {x: 6, y: 17, color: "#4fb225"}]
         held = false;
         hold = null;
         renderHold();
@@ -794,10 +663,7 @@ $(document).ready(function(){
         }
 
         startInterval();
-        spawnTetromino(nextPieces[0]);
-        nextPieces.splice(0,1);
-        nextPieces.push(Math.floor(Math.random() * tetrominoes.length + 1));
-        renderNext();
+        spawnNextPiece();
     }
 
     function blockAtPos(x,y) {

@@ -173,6 +173,7 @@ let settings = {
     spawnPosY: 20,
 
     //Gameplay
+    hold: true,
     nextAmount: 6,
     //Amount of Next pieces
     gravity: 1,
@@ -236,6 +237,8 @@ settings.tudp = 999999999;
 settings.pfGridW = 10;
 settings.spawnPosY = 21;
 settings.rswpp = false;
+settings.hold = false;
+settings.nextAmount = 0;
 //
 
 const pfW = settings.pfGridW*settings.blockSize;
