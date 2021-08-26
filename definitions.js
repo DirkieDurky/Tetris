@@ -146,6 +146,7 @@ function numberToTetromino(number) {
     }
 }
 
+let gamePaused = false;
 let gameRunning = false;
 
 let passiveBlocks = [];
@@ -231,7 +232,7 @@ let settings = {
 // My personal settings
 settings.das = 100;
 settings.arr = 0;
-settings.gravity = 0;
+settings.gravity = 10;
 settings.sds = 0;
 settings.tudp = 999999999;
 settings.pfGridW = 10;
@@ -275,10 +276,9 @@ let dropRepeatRate = originalDropRepeatRate;
 /*
 Todo
  - Basic Tetris -
- Make a start/pause button
- Make a restart button
  Make settings tab
  Add 7-bag option
+ If hold is off make holding impossible
 
 Todo
  - Finesse Trainer -
@@ -302,8 +302,9 @@ Todo
  Customisable death cause
     - Not being able to place tetromino
     - Block placed over specific height
+    - Both
  Custom maps
- Custom tetrominos
+ Custom pieces
  Custom Rotation systems
  Custom block textures
  Custom sounds
@@ -316,4 +317,5 @@ Todo
  Save gameState
  Replays
  Garbage
+ Custom Tetromino color / texture
 */

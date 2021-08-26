@@ -23,6 +23,8 @@ $(document).ready(function(){
     nextBox.style.width = nextW+"px";
     nextBox.style.height = nextH+"px";
 
+    const startButton = $("#startButton");
+
     if (!settings.hold) {
         $("#holdBox").remove();
     }
@@ -30,14 +32,6 @@ $(document).ready(function(){
     if (settings.nextAmount < 1) {
         $("#nextBox").remove();
     }
-
-    //Center everything exactly
-    // const container = document.getElementById("container");
-    // if (holdBox.style.width > nextBox.style.width) {
-    //     container.style.left = "calc(50% - "+(parseInt(holdBox.style.width)-parseInt(nextBox.style.width))/2+"px)";
-    // } else {
-    //     container.style.left = "calc(50% + "+(parseInt(nextBox.style.width)-parseInt(holdBox.style.width))/2+"px)";
-    // }
 
     //Make grid
     for (let i=0; i<pfW; i=i+(pfW/settings.pfGridW)) {
@@ -113,6 +107,21 @@ $(document).ready(function(){
             color,opacity);
     }
 
+    function setOffset(tetromino) {
+        let result = {
+            y:0,
+            x:0
+        };
+        switch (tetromino) {
+            case "I":
+                result.y = 0.5;
+            case "O":
+                result.x = -0.5
+                break;
+        }
+        return result;
+    }
+
     function renderHold() {
         clearCanvas(hbCtx,holdBox);
         if (hold !== null) {
@@ -120,8 +129,6 @@ $(document).ready(function(){
             const tetrominoRotation = tetrominoData.rotations[0];
             const offsetX = 4;
             const offsetY = 3;
-            let tetrominoOffsetX = 0;
-            let tetrominoOffsetY = 0;
 
             let color;
             if (held) {
@@ -130,25 +137,19 @@ $(document).ready(function(){
                 color = tetrominoData.color;
             }
 
-            switch (hold) {
-                case "I":
-                    tetrominoOffsetY = 0.5;
-                case "O":
-                    tetrominoOffsetX = -.5
-                    break;
-            }
+            const offset = setOffset(hold);
 
-            drawBlock(hbCtx,offsetX + tetrominoOffsetX + tetrominoRotation.block1x,
-                offsetY + tetrominoOffsetY + tetrominoRotation.block1y,
+            drawBlock(hbCtx,offsetX + offset.x + tetrominoRotation.block1x,
+                offsetY + offset.y + tetrominoRotation.block1y,
                 color);
-            drawBlock(hbCtx,offsetX + tetrominoOffsetX + tetrominoRotation.block2x,
-                offsetY + tetrominoOffsetY + tetrominoRotation.block2y,
+            drawBlock(hbCtx,offsetX + offset.x + tetrominoRotation.block2x,
+                offsetY + offset.y + tetrominoRotation.block2y,
                 color);
-            drawBlock(hbCtx,offsetX + tetrominoOffsetX + tetrominoRotation.block3x,
-                offsetY + tetrominoOffsetY + tetrominoRotation.block3y,
+            drawBlock(hbCtx,offsetX + offset.x + tetrominoRotation.block3x,
+                offsetY + offset.y + tetrominoRotation.block3y,
                 color);
-            drawBlock(hbCtx,offsetX + tetrominoOffsetX + tetrominoRotation.block4x,
-                offsetY + tetrominoOffsetY + tetrominoRotation.block4y,
+            drawBlock(hbCtx,offsetX + offset.x + tetrominoRotation.block4x,
+                offsetY + offset.y + tetrominoRotation.block4y,
                 color);
         }
     }
@@ -439,111 +440,125 @@ $(document).ready(function(){
 
     $(document).keydown(function (e) {
         let keycode = (e.keyCode ? e.keyCode : e.which);
-        if (down.includes(keycode)) return;
-        down.push(keycode);
-
-        if (tup !== null) {
-            clearTimeout(tup);
-            startTimeout();
-        }
-
-        function keyPressed() {
-            switch (keycode) {
-                case settings.controls.moveRight:
-                    das(keycode, function () {
-                        if (checkCollision("right")) return;
-                        activeTetromino.x++;
-                        softDrop();
-                        render();
-                        clearTimeout(timeout[settings.controls.moveLeft]);
-                        clearInterval(interval[settings.controls.moveLeft]);
-                    }, "right");
-                    return true;
-                case settings.controls.moveLeft:
-                    das(keycode, function () {
-                        if (checkCollision("left")) return;
-                        activeTetromino.x--;
-                        softDrop();
-                        render();
-                        clearTimeout(timeout[settings.controls.moveRight]);
-                        clearInterval(interval[settings.controls.moveRight]);
-                    }, "left");
-                    return true;
-                case settings.controls.rotateCCW:
-                    rotate("ccw");
-                    if (heldSide.length !== 0) {
-                        moveInstantly(heldSide[0])
-                    }
-                    softDrop();
-                    return true;
-                case settings.controls.rotateCW:
-                    rotate("cw");
-                    if (heldSide.length !== 0) {
-                        moveInstantly(heldSide[0])
-                    }
-                    softDrop();
-                    return true;
-                case settings.controls.rotate180:
-                    rotate("180");
-                    if (heldSide.length !== 0) {
-                        moveInstantly(heldSide[0])
-                    }
-                    softDrop();
-                    return true;
-                case settings.controls.hold:
-                    if (!held) {
-                        held = true;
-                        if (hold == null) {
-                            hold = activeTetromino.tetromino;
-                            renderHold();
-                            activeTetromino = null;
-                            spawnNextPiece();
-                        } else {
-                            tmp = activeTetromino.tetromino;
-                            activeTetromino = null;
-                            spawnTetromino(hold);
-                            hold = tmp;
-                            renderHold();
-                            tmp = null;
-                        }
-                    }
-                    if (heldSide.length !== 0) {
-                        moveInstantly(heldSide[0])
-                    }
-                    if (!settings.rswpp) {
-                        softDrop();
-                    }
-                    return true;
-                case settings.controls.softDrop:
-                    if (settings.sds !== 0) {
-                        softDrop = setInterval(function () {
-                            if (checkCollision("down")) {
-                                clearInterval(gameTick);
-                                startInterval();
-                                render();
-                                return;
-                            }
-                            activeTetromino.y--;
-                            render();
-                        }, settings.sds);
-                    } else {
-                        softDropHeld = true;
-                        softDrop();
-                    }
-                    return true;
-                case settings.controls.hardDrop:
-                    while (!checkCollision("down")) {
-                        activeTetromino.y--;
-                    }
-                    placeTetromino();
-                    return true;
-                case settings.controls.restart:
+        if (keycode === settings.controls.restart) {
+            if (!gameRunning) {
+                startButton.html("Pause");
+                startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
+                const restartButton = $("#restartButton");
+                restartButton.click(function(){
                     startGame();
-                    return true;
+                })
             }
+            startGame();
         }
-        if (keyPressed()) {
-            render();
+        if (!gamePaused && gameRunning) {
+            if (down.includes(keycode)) return;
+            down.push(keycode);
+
+            if (tup !== null) {
+                clearTimeout(tup);
+                startTimeout();
+            }
+
+            function keyPressed() {
+                switch (keycode) {
+                    case settings.controls.moveRight:
+                        das(keycode, function () {
+                            if (checkCollision("right")) return;
+                            activeTetromino.x++;
+                            softDrop();
+                            render();
+                            clearTimeout(timeout[settings.controls.moveLeft]);
+                            clearInterval(interval[settings.controls.moveLeft]);
+                        }, "right");
+                        return true;
+                    case settings.controls.moveLeft:
+                        das(keycode, function () {
+                            if (checkCollision("left")) return;
+                            activeTetromino.x--;
+                            softDrop();
+                            render();
+                            clearTimeout(timeout[settings.controls.moveRight]);
+                            clearInterval(interval[settings.controls.moveRight]);
+                        }, "left");
+                        return true;
+                    case settings.controls.rotateCCW:
+                        rotate("ccw");
+                        if (heldSide.length !== 0) {
+                            moveInstantly(heldSide[0])
+                        }
+                        softDrop();
+                        return true;
+                    case settings.controls.rotateCW:
+                        rotate("cw");
+                        if (heldSide.length !== 0) {
+                            moveInstantly(heldSide[0])
+                        }
+                        softDrop();
+                        return true;
+                    case settings.controls.rotate180:
+                        rotate("180");
+                        if (heldSide.length !== 0) {
+                            moveInstantly(heldSide[0])
+                        }
+                        softDrop();
+                        return true;
+                    case settings.controls.hold:
+                        if (!held) {
+                            held = true;
+                            if (hold == null) {
+                                hold = activeTetromino.tetromino;
+                                renderHold();
+                                activeTetromino = null;
+                                spawnNextPiece();
+                            } else {
+                                tmp = activeTetromino.tetromino;
+                                activeTetromino = null;
+                                spawnTetromino(hold);
+                                hold = tmp;
+                                renderHold();
+                                tmp = null;
+                            }
+                        }
+                        if (heldSide.length !== 0) {
+                            moveInstantly(heldSide[0])
+                        }
+                        if (!settings.rswpp) {
+                            softDrop();
+                        }
+                        return true;
+                    case settings.controls.softDrop:
+                        if (settings.sds !== 0) {
+                            softDrop = setInterval(function () {
+                                if (checkCollision("down")) {
+                                    clearInterval(gameTick);
+                                    startInterval();
+                                    render();
+                                    return;
+                                }
+                                activeTetromino.y--;
+                                render();
+                            }, settings.sds);
+                        } else {
+                            softDropHeld = true;
+                            softDrop();
+                        }
+                        return true;
+                    case settings.controls.hardDrop:
+                        while (!checkCollision("down")) {
+                            activeTetromino.y--;
+                        }
+                        placeTetromino();
+                        return true;
+                    case settings.controls.restart:
+                        startGame();
+                        return true;
+                }
+            }
+
+            if (keyPressed()) {
+                render();
+            }
         }
     })
 
@@ -611,6 +626,8 @@ $(document).ready(function(){
         } else {
             clearInterval(gameTick);
             gameRunning = false;
+            startButton.html("Start");
+            restartButton.remove();
         }
 
         if (heldSide.length !== 0) {
@@ -621,28 +638,30 @@ $(document).ready(function(){
     function startInterval() {
         if (settings.gravity !== 0) {
             gameTick = setInterval(function () {
-                if (checkCollision("down")) {
-                    if (settings.leniency) {
-                        if (tup === null) {
-                            startTimeout();
-                        }
-                        if (tudp === null) {
-                            tudp = setTimeout(function () {
-                                clearInterval(tup);
-                                if (checkCollision("down")) {
-                                    placeTetromino();
-                                } else {
-                                    tudp = null;
-                                }
-                            }, settings.tudp);
+                if (!gamePaused) {
+                    if (checkCollision("down")) {
+                        if (settings.leniency) {
+                            if (tup === null) {
+                                startTimeout();
+                            }
+                            if (tudp === null) {
+                                tudp = setTimeout(function () {
+                                    clearInterval(tup);
+                                    if (checkCollision("down")) {
+                                        placeTetromino();
+                                    } else {
+                                        tudp = null;
+                                    }
+                                }, settings.tudp);
+                            }
+                        } else {
+                            placeTetromino();
                         }
                     } else {
-                        placeTetromino();
+                        activeTetromino.y--;
                     }
-                } else {
-                    activeTetromino.y--;
+                    render();
                 }
-                render();
             }, dropRepeatRate)
         }
     }
@@ -787,5 +806,24 @@ $(document).ready(function(){
         },settings.tup);
     }
 
-    startGame();
+    startButton.click(start);
+
+    function start(){
+        if (!gameRunning) {
+            startGame();
+            startButton.html("Pause");
+            startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
+            const restartButton = $("#restartButton");
+            restartButton.click(function(){
+                startGame();
+            })
+        } else {
+            gamePaused = !gamePaused;
+            if (gamePaused) {
+                startButton.html("Continue");
+            } else {
+                startButton.html("Pause");
+            }
+        }
+    }
 })
