@@ -692,17 +692,24 @@ $(document).ready(function(){
         let tSpin = false;
         if (activeTetromino.tetromino === "T") {
             switch (activeTetromino.rotation) {
+                //2 blocks in the 'armpit'                                        and 1 on the flat side
                 case 0: if ((blockAtRelPos(0,0) && blockAtRelPos(-2,0) && (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2))) ||
-                    blockAtRelPos(-2,-2) && blockAtRelPos(0,-2) && (blockAtRelPos(0,0) || blockAtRelPos(-2,0))) tSpin = true;
+                    //2 blocks on the flat side,
+                    blockAtRelPos(-2,-2) && blockAtRelPos(0,-2) &&
+                    //1 in an armpit and cant move
+                        ((blockAtRelPos(0,0) && blockAtRelPos(-3,-1)) || (blockAtRelPos(-2,0) && blockAtRelPos(1,-1)))) tSpin = true;
                     break;
                 case 1: if (blockAtRelPos(0,0) && blockAtRelPos(0,-2) && (blockAtRelPos(-2,0) || blockAtRelPos(-2,-2)) ||
-                    blockAtRelPos(-2,0) && blockAtRelPos(-2,-2) && (blockAtRelPos(0,0) || blockAtRelPos(0,-2))) tSpin = true;
+                    blockAtRelPos(-2,0) && blockAtRelPos(-2,-2) &&
+                        ((blockAtRelPos(0,0) && blockAtRelPos(-1,-3)) || (blockAtRelPos(0,-2) && blockAtRelPos(-1,1)))) tSpin = true;
                     break;
                 case 2: if (blockAtRelPos(-2,-2) && blockAtRelPos(0,-2) && (blockAtRelPos(0,0) || blockAtRelPos(-2,0)) ||
-                    blockAtRelPos(0,0) && blockAtRelPos(-2,0) && (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2))) tSpin = true;
+                    blockAtRelPos(0,0) && blockAtRelPos(-2,0) &&
+                        ((blockAtRelPos(-2,-2) && blockAtRelPos(1,-1)) || (blockAtRelPos(0,-2) && blockAtRelPos(-3,-1)))) tSpin = true;
                     break;
                 case 3: if (blockAtRelPos(-2,0) && blockAtRelPos(-2,-2) && (blockAtRelPos(0,0) || blockAtRelPos(0,-2)) ||
-                    blockAtRelPos(0,0) && blockAtRelPos(0,-2) && (blockAtRelPos(-2,0) || blockAtRelPos(-2,-2))) tSpin = true;
+                    blockAtRelPos(0,0) && blockAtRelPos(0,-2) &&
+                        ((blockAtRelPos(-2,0) && blockAtRelPos(-1,-3)) || (blockAtRelPos(-2,-2) && blockAtRelPos(-1,1)))) tSpin = true;
                     break;
             }
         }

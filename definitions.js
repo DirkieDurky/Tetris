@@ -231,15 +231,19 @@ let settings = {
 // My personal settings
 settings.das = 100;
 settings.arr = 0;
-settings.gravity = 10;
+settings.gravity = 0;
 settings.sds = 0;
 settings.tudp = 999999999;
 settings.pfGridW = 10;
 settings.spawnPosY = 21;
-settings.rswpp = false;
-settings.hold = false;
-settings.nextAmount = 0;
+settings.rswpp = true;
+settings.hold = true;
+settings.nextAmount = 6;
 //
+
+if (settings.nextAmount > 6) {
+    throw "Max nextAmount is 6";
+}
 
 const pfW = settings.pfGridW*settings.blockSize;
 const pfH = settings.pfGridH*settings.blockSize;
@@ -274,6 +278,7 @@ Todo
  Make a start/pause button
  Make a restart button
  Make settings tab
+ Add 7-bag option
 
 Todo
  - Finesse Trainer -

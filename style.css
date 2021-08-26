@@ -6,7 +6,7 @@ body {
 #container {
     position: absolute;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, auto) auto minmax(0, auto);
     width: 100%;
     top: 40px;
     bottom: 30px;
