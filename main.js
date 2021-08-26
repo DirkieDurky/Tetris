@@ -112,6 +112,7 @@ $(document).ready(function(){
             y:0,
             x:0
         };
+
         switch (tetromino) {
             case "I":
                 result.y = 0.5;
@@ -168,25 +169,19 @@ $(document).ready(function(){
             let tetrominoOffsetY = 0;
             let color = tetrominoData.color;
 
-            switch (numberToTetromino(tetromino)) {
-                case "I":
-                    tetrominoOffsetY = 0.5;
-                case "O":
-                    tetrominoOffsetX = -.5
-                    break;
-            }
+            const offset = setOffset(numberToTetromino(tetromino));
 
-            drawBlock(nbCtx,offsetX + tetrominoOffsetX + tetrominoRotation.block1x,
-                offsetY + tetrominoOffsetY + tetrominoRotation.block1y,
+            drawBlock(nbCtx,offsetX + offset.x + tetrominoRotation.block1x,
+                offsetY + offset.y + tetrominoRotation.block1y,
                 color);
-            drawBlock(nbCtx,offsetX + tetrominoOffsetX + tetrominoRotation.block2x,
-                offsetY + tetrominoOffsetY + tetrominoRotation.block2y,
+            drawBlock(nbCtx,offsetX + offset.x + tetrominoRotation.block2x,
+                offsetY + offset.y + tetrominoRotation.block2y,
                 color);
-            drawBlock(nbCtx,offsetX + tetrominoOffsetX + tetrominoRotation.block3x,
-                offsetY + tetrominoOffsetY + tetrominoRotation.block3y,
+            drawBlock(nbCtx,offsetX + offset.x + tetrominoRotation.block3x,
+                offsetY + offset.y + tetrominoRotation.block3y,
                 color);
-            drawBlock(nbCtx,offsetX + tetrominoOffsetX + tetrominoRotation.block4x,
-                offsetY + tetrominoOffsetY + tetrominoRotation.block4y,
+            drawBlock(nbCtx,offsetX + offset.x + tetrominoRotation.block4x,
+                offsetY + offset.y + tetrominoRotation.block4y,
                 color);
         })
     }
@@ -504,27 +499,29 @@ $(document).ready(function(){
                         softDrop();
                         return true;
                     case settings.controls.hold:
-                        if (!held) {
-                            held = true;
-                            if (hold == null) {
-                                hold = activeTetromino.tetromino;
-                                renderHold();
-                                activeTetromino = null;
-                                spawnNextPiece();
-                            } else {
-                                tmp = activeTetromino.tetromino;
-                                activeTetromino = null;
-                                spawnTetromino(hold);
-                                hold = tmp;
-                                renderHold();
-                                tmp = null;
+                        if (settings.hold) {
+                            if (!held) {
+                                held = true;
+                                if (hold == null) {
+                                    hold = activeTetromino.tetromino;
+                                    renderHold();
+                                    activeTetromino = null;
+                                    spawnNextPiece();
+                                } else {
+                                    tmp = activeTetromino.tetromino;
+                                    activeTetromino = null;
+                                    spawnTetromino(hold);
+                                    hold = tmp;
+                                    renderHold();
+                                    tmp = null;
+                                }
                             }
-                        }
-                        if (heldSide.length !== 0) {
-                            moveInstantly(heldSide[0])
-                        }
-                        if (!settings.rswpp) {
-                            softDrop();
+                            if (heldSide.length !== 0) {
+                                moveInstantly(heldSide[0])
+                            }
+                            if (!settings.rswpp) {
+                                softDrop();
+                            }
                         }
                         return true;
                     case settings.controls.softDrop:

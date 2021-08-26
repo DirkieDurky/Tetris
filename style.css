@@ -6,12 +6,20 @@ body {
 #container {
     position: absolute;
     display: grid;
-    grid-template-columns: minmax(0, auto) auto minmax(0, auto);
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     width: 100%;
     top: 40px;
     bottom: 30px;
     justify-content: center;
     gap: 20px;
+}
+
+#leftSection > * {
+    float: right;
+}
+
+#rightSection > * {
+    float: left;
 }
 
 #holdBox,#playField,#nextBox {
