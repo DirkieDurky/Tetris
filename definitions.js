@@ -73,7 +73,7 @@ const SrsData = [{
         //1-2 / 2-1
     [[0,0],[1,0],[1,-1],[0,2],[1,2]],
     [[0,0],[-1,0],[-1,1],[0,-2],[-1,-2]],
-        //2-3 3-2
+        //2-3 / 3-2
     [[0,0],[1,0],[1,1],[0,-2],[1,-2]],
     [[0,0],[-1,0],[-1,-1],[0,2],[-1,2]],
         //3-0 / 0-3
@@ -91,17 +91,26 @@ const SrsData = [{
 },{
     name:"I",
     rotations:[
+        //0-1 / 1-0
     [[0,0],[-2,0],[1,0],[-2,1],[1,1]],
     [[0,0],[2,0],[-1,0],[2,-1],[-1,-1]],
-
+        //1-2 / 2-1
     [[0,0],[-1,0],[2,0],[-1,2],[2,-1]],
     [[0,0],[1,0],[-2,0],[1,-2],[-2,1]],
-
+        //2-3 / 3-2
     [[0,0],[2,0],[-1,0],[2,1],[-1,-2]],
     [[0,0],[-2,0],[1,0],[-2,-1],[1,2]],
-
+        //3-0 / 0-3
     [[0,0],[1,0],[-2,0],[1,-2],[-2,1]],
-    [[0,0],[-1,0],[2,0],[-1,2],[2,-1]]
+    [[0,0],[-1,0],[2,0],[-1,2],[2,-1]],
+
+        //180
+        //0-2 / 2-0
+    [[0,0],[-1,0],[-2,0],[1,0],[2,0],[0,1]],
+    [[0,0],[1,0],[2,0],[-1,0],[-2,0],[0,-1]],
+        //1-3 / 3-1
+    [[0,0],[1,0],[2,0],[-1,0],[-2,0],[0,-1]],
+    [[0,0],[-1,0],[-2,0],[1,0],[2,0],[0,1]],
 ]
 }
 ]
@@ -143,7 +152,6 @@ let passiveBlocks = [];
 
 let activeTetromino = null;
 let ghostTetromino = null;
-let softDrop;
 
 let tmp = null;
 let hold = null;
@@ -151,17 +159,21 @@ let held = false;
 
 // noinspection SpellCheckingInspection
 let settings = {
+
+    //Handling
     das: 167,
     arr: 31,
     sds: 30,
 
+    //PlayField
     pfGridH: 20,
     pfGridW: 10,
     blockSize: 40,
     spawnPosX: 6,
-    spawnPosY: 19,
+    spawnPosY: 20,
 
-    nextAmount: 1,
+    //Gameplay
+    nextAmount: 6,
     //Amount of Next pieces
     gravity: 1,
     repeatRate: null,
@@ -177,10 +189,22 @@ let settings = {
         Sega Rotation System
         DTET Rotation System
          */
-    leniency: false,
+    leniency: true,
         tup: 500, //Time until placed when not moving the piece
         tudp: 2000, //Time until piece is placed no matter what
+    rswpp: true, //Remove softDrop when piece placed
     ghostPiece: true,
+    nesTetrisRotations: false,
+    randomBagType: "trueRandom",
+    /*Options:
+    trueRandom
+    7-bag
+    14-bag
+    classic
+    */
+    topCollision: false, //Determines if the top of the playField has a collision !!If this option is true make sure to set spawnposition y to gridHeight or below or no pieces will be able to spawn
+
+    //Customisation
     ghostPieceColor: "#7d7d7d",
     heldColor: "#7d7d7d", //Color of the hold piece if you cant use the hold anymore this turn
         /*Options:
@@ -188,15 +212,8 @@ let settings = {
         Same as Tetromino
          */
     ghostPieceOpacity: 50,
-    rswpp: true, //Remove softDrop when piece placed
-    nesTetrisRotations: false,
-    randomBagType: "trueRandom",
-        /*Options:
-        trueRandom
-        7-bag
-        14-bag
-        classic
-        */
+
+    //Controls
     controls: {
         moveRight: 39,
         moveLeft: 37,
@@ -212,11 +229,13 @@ let settings = {
 
 // My personal settings
 settings.das = 100;
-settings.arr = 31;
-settings.gravity = 0;
+settings.arr = 0;
+settings.gravity = 10;
 settings.sds = 0;
 settings.tudp = 999999999;
 settings.pfGridW = 10;
+settings.spawnPosY = 21;
+settings.rswpp = false;
 //
 
 const pfW = settings.pfGridW*settings.blockSize;
@@ -249,8 +268,6 @@ let dropRepeatRate = originalDropRepeatRate;
 /*
 Todo
  - Basic Tetris -
- Bug where some T-Spins arent recognised happening again?
- Bug where holding softDrop doesnt do anything anymore after the first time with sds = 0 happening again?
  Make a start/pause button
  Make a restart button
  Make settings tab
@@ -286,4 +303,9 @@ Todo
  Undo option
  Multiple holds
  Finesse beeper
+ Custom setting profiles
+ Custom background image / color
+ Save gameState
+ Replays
+ Garbage
 */

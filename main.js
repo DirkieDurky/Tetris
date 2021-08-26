@@ -274,9 +274,16 @@ $(document).ready(function(){
 
     function checkOutOfBounds(x,y,tetromino,rotation) {
         let activeBlocks = blocksFromTetromino(x, y, tetromino, rotation);
-        if (activeBlocks.block1y < 1 || activeBlocks.block2y < 1 || activeBlocks.block3y < 1 || activeBlocks.block4y < 1 ||
-            activeBlocks.block1x < 1 || activeBlocks.block2x < 1 || activeBlocks.block3x < 1 || activeBlocks.block4x < 1 ||
-            activeBlocks.block1x > settings.pfGridW || activeBlocks.block2x > settings.pfGridW || activeBlocks.block3x > settings.pfGridW || activeBlocks.block4x > settings.pfGridW) return true;
+        if (settings.topCollision) {
+            if (activeBlocks.block1y < 1 || activeBlocks.block2y < 1 || activeBlocks.block3y < 1 || activeBlocks.block4y < 1 ||
+                activeBlocks.block1x < 1 || activeBlocks.block2x < 1 || activeBlocks.block3x < 1 || activeBlocks.block4x < 1 ||
+                activeBlocks.block1y > settings.pfGridH || activeBlocks.block2y > settings.pfGridH || activeBlocks.block3y > settings.pfGridH || activeBlocks.block4y > settings.pfGridH ||
+                activeBlocks.block1x > settings.pfGridW || activeBlocks.block2x > settings.pfGridW || activeBlocks.block3x > settings.pfGridW || activeBlocks.block4x > settings.pfGridW) return true;
+        } else {
+            if (activeBlocks.block1y < 1 || activeBlocks.block2y < 1 || activeBlocks.block3y < 1 || activeBlocks.block4y < 1 ||
+                activeBlocks.block1x < 1 || activeBlocks.block2x < 1 || activeBlocks.block3x < 1 || activeBlocks.block4x < 1 ||
+                activeBlocks.block1x > settings.pfGridW || activeBlocks.block2x > settings.pfGridW || activeBlocks.block3x > settings.pfGridW || activeBlocks.block4x > settings.pfGridW) return true;
+        }
     }
 
     function checkBlockCollision(x,y,tetromino,rotation) {
@@ -418,6 +425,7 @@ $(document).ready(function(){
             } else {
                 if (!heldSide.includes(keycode)) heldSide.push(keycode);
                 moveInstantly(heldSide[0]);
+                softDrop();
             }
         }, settings.das);
     }
@@ -438,21 +446,21 @@ $(document).ready(function(){
                     das(keycode, function () {
                         if (checkCollision("right")) return;
                         activeTetromino.x++;
+                        softDrop();
                         render();
                         clearTimeout(timeout[settings.controls.moveLeft]);
                         clearInterval(interval[settings.controls.moveLeft]);
                     }, "right");
-                    softDrop();
                     return true;
                 case settings.controls.moveLeft:
                     das(keycode, function () {
                         if (checkCollision("left")) return;
                         activeTetromino.x--;
+                        softDrop();
                         render();
                         clearTimeout(timeout[settings.controls.moveRight]);
                         clearInterval(interval[settings.controls.moveRight]);
                     }, "left");
-                    softDrop();
                     return true;
                 case settings.controls.rotateCCW:
                     rotate("ccw");
@@ -492,7 +500,12 @@ $(document).ready(function(){
                             tmp = null;
                         }
                     }
-                    softDrop();
+                    if (heldSide.length !== 0) {
+                        moveInstantly(heldSide[0])
+                    }
+                    if (!settings.rswpp) {
+                        softDrop();
+                    }
                     return true;
                 case settings.controls.softDrop:
                     if (settings.sds !== 0) {
@@ -623,6 +636,154 @@ $(document).ready(function(){
             clearInterval(gameTick);
         }
         passiveBlocks = [];
+        // passiveBlocks = [{x: 2, y: 1, color: "#b32487"},
+        //     {x: 3, y: 1, color: "#b32487"},
+        // {x: 4, y: 1, color: "#b32487"},
+        // {x: 5, y: 1, color: "#4fb225"},
+        // {x: 5, y: 2, color: "#4fb225"},
+        // {x: 6, y: 1, color: "#009ad6"},
+        // {x: 7, y: 1, color: "#009ad6"},
+        // {x: 8, y: 1, color: "#009ad6"},
+        // {x: 9, y: 1, color: "#009ad6"},
+        // {x: 10, y: 1, color: "#4fb225"},
+        //  {x: 9, y: 2, color: "#4fb225"},
+        //  {x: 10, y: 2, color: "#4fb225"},
+        //  {x: 1, y: 3, color: "#009ad6"},
+        //  {x: 1, y: 2, color: "#009ad6"},
+        //  {x: 3, y: 2, color: "#dc0732"},
+        //  {x: 4, y: 2, color: "#dc0732"},
+        //  {x: 7, y: 2, color: "#e6a01a"},
+        //  {x: 8, y: 2, color: "#e6a01a"},
+        //  {x: 6, y: 2, color: "#b32487"},
+        //  {x: 7, y: 3, color: "#e6a01a"},
+        //  {x: 8, y: 3, color: "#e6a01a"},
+        //  {x: 4, y: 3, color: "#e85b00"},
+        //  {x: 2, y: 3, color: "#b32487"},
+        //  {x: 5, y: 3, color: "#e85b00"},
+        //  {x: 6, y: 3, color: "#e85b00"},
+        //  {x: 1, y: 5, color: "#009ad6"},
+        //  {x: 1, y: 4, color: "#009ad6"},
+        //  {x: 6, y: 4, color: "#213cc3"},
+        //  {x: 7, y: 4, color: "#213cc3"},
+        //  {x: 8, y: 4, color: "#213cc3"},
+        //  {x: 3, y: 4, color: "#e85b00"},
+        //  {x: 5, y: 4, color: "#213cc3"},
+        //  {x: 10, y: 3, color: "#b32487"},
+        //  {x: 9, y: 4, color: "#009ad6"},
+        //  {x: 9, y: 3, color: "#009ad6"},
+        //  {x: 2, y: 5, color: "#b32487"},
+        //  {x: 2, y: 4, color: "#b32487"},
+        //  {x: 3, y: 5, color: "#4fb225"},
+        //  {x: 4, y: 5, color: "#4fb225"},
+        //  {x: 6, y: 5, color: "#213cc3"},
+        //  {x: 8, y: 6, color: "#213cc3"},
+        //  {x: 8, y: 5, color: "#213cc3"},
+        //  {x: 7, y: 5, color: "#213cc3"},
+        //  {x: 9, y: 5, color: "#4fb225"},
+        //  {x: 10, y: 4, color: "#4fb225"},
+        //  {x: 4, y: 7, color: "#213cc3"},
+        //  {x: 4, y: 6, color: "#213cc3"},
+        //  {x: 3, y: 6, color: "#213cc3"},
+        //  {x: 9, y: 6, color: "#4fb225"},
+        //  {x: 10, y: 5, color: "#4fb225"},
+        //  {x: 6, y: 7, color: "#dc0732"},
+        //  {x: 5, y: 6, color: "#dc0732"},
+        //  {x: 7, y: 6, color: "#e85b00"},
+        //  {x: 2, y: 6, color: "#213cc3"},
+        //  {x: 8, y: 7, color: "#b32487"},
+        //  {x: 9, y: 7, color: "#e85b00"},
+        //  {x: 10, y: 7, color: "#e85b00"},
+        //  {x: 10, y: 6, color: "#e85b00"},
+        //  {x: 9, y: 8, color: "#e6a01a"},
+        //  {x: 10, y: 8, color: "#e6a01a"},
+        //  {x: 5, y: 7, color: "#4fb225"},
+        //  {x: 1, y: 7, color: "#009ad6"},
+        //  {x: 1, y: 6, color: "#009ad6"},
+        //  {x: 2, y: 7, color: "#e85b00"},
+        //  {x: 3, y: 8, color: "#009ad6"},
+        //  {x: 3, y: 7, color: "#009ad6"},
+        //  {x: 5, y: 8, color: "#4fb225"},
+        //  {x: 6, y: 8, color: "#4fb225"},
+        //  {x: 7, y: 8, color: "#4fb225"},
+        //  {x: 4, y: 8, color: "#b32487"},
+        //  {x: 8, y: 9, color: "#b32487"},
+        //  {x: 10, y: 9, color: "#009ad6"},
+        //  {x: 7, y: 9, color: "#e85b00"},
+        //  {x: 1, y: 8, color: "#e85b00"},
+        //  {x: 2, y: 8, color: "#e85b00"},
+        //  {x: 3, y: 9, color: "#009ad6"},
+        //  {x: 1, y: 9, color: "#e85b00"},
+        //  {x: 2, y: 9, color: "#e85b00"},
+        //  {x: 5, y: 9, color: "#4fb225"},
+        //  {x: 6, y: 9, color: "#4fb225"},
+        //  {x: 1, y: 10, color: "#e85b00"},
+        //  {x: 2, y: 10, color: "#dc0732"},
+        //  {x: 3, y: 10, color: "#dc0732"},
+        //  {x: 3, y: 11, color: "#dc0732"},
+        //  {x: 4, y: 9, color: "#213cc3"},
+        //  {x: 1, y: 11, color: "#009ad6"},
+        //  {x: 8, y: 10, color: "#b32487"},
+        //  {x: 9, y: 10, color: "#b32487"},
+        //  {x: 4, y: 10, color: "#213cc3"},
+        //  {x: 5, y: 10, color: "#dc0732"},
+        //  {x: 6, y: 10, color: "#dc0732"},
+        //  {x: 7, y: 10, color: "#213cc3"},
+        //  {x: 4, y: 11, color: "#e6a01a"},
+        //  {x: 5, y: 11, color: "#e6a01a"},
+        //  {x: 10, y: 11, color: "#b32487"},
+        //  {x: 8, y: 11, color: "#213cc3"},
+        //  {x: 7, y: 11, color: "#009ad6"},
+        //  {x: 2, y: 11, color: "#dc0732"},
+        //  {x: 6, y: 11, color: "#e85b00"},
+        //  {x: 2, y: 12, color: "#dc0732"},
+        // {x: 9, y: 12, color: "#4fb225"},
+        // {x: 3, y: 12, color: "#009ad6"},
+        // {x: 6, y: 12, color: "#e85b00"},
+        // {x: 4, y: 12, color: "#e85b00"},
+        // {x: 5, y: 12, color: "#e85b00"},
+        // {x: 7, y: 12, color: "#e85b00"},
+        // {x: 10, y: 12, color: "#e85b00"},
+        // {x: 4, y: 13, color: "#4fb225"},
+        // {x: 8, y: 14, color: "#4fb225"},
+        // {x: 8, y: 13, color: "#4fb225"},
+        // {x: 9, y: 13, color: "#4fb225"},
+        // {x: 1, y: 12, color: "#213cc3"},
+        // {x: 2, y: 13, color: "#dc0732"},
+        // {x: 4, y: 14, color: "#dc0732"},
+        // {x: 5, y: 14, color: "#dc0732"},
+        // {x: 5, y: 13, color: "#dc0732"},
+        // {x: 6, y: 13, color: "#dc0732"},
+        // {x: 2, y: 14, color: "#b32487"},
+        // {x: 3, y: 14, color: "#b32487"},
+        // {x: 3, y: 13, color: "#b32487"},
+        // {x: 1, y: 14, color: "#213cc3"},
+        // {x: 1, y: 13, color: "#213cc3"},
+        // {x: 7, y: 14, color: "#b32487"},
+        // {x: 9, y: 14, color: "#b32487"},
+        // {x: 4, y: 15, color: "#4fb225"},
+        // {x: 5, y: 15, color: "#4fb225"},
+        // {x: 10, y: 14, color: "#009ad6"},
+        // {x: 10, y: 13, color: "#009ad6"},
+        // {x: 6, y: 16, color: "#b32487"},
+        // {x: 6, y: 15, color: "#b32487"},
+        // {x: 7, y: 15, color: "#b32487"},
+        // {x: 2, y: 16, color: "#213cc3"},
+        // {x: 2, y: 15, color: "#213cc3"},
+        // {x: 8, y: 15, color: "#e85b00"},
+        // {x: 9, y: 15, color: "#e85b00"},
+        // {x: 10, y: 15, color: "#e85b00"},
+        // {x: 1, y: 17, color: "#213cc3"},
+        // {x: 2, y: 17, color: "#213cc3"},
+        // {x: 1, y: 16, color: "#213cc3"},
+        // {x: 1, y: 15, color: "#213cc3"},
+        // {x: 9, y: 17, color: "#e6a01a"},
+        // {x: 10, y: 17, color: "#e6a01a"},
+        // {x: 9, y: 16, color: "#e6a01a"},
+        // {x: 10, y: 16, color: "#e6a01a"},
+        // {x: 6, y: 18, color: "#4fb225"},
+        // {x: 7, y: 18, color: "#4fb225"},
+        // {x: 5, y: 17, color: "#4fb225"},
+        // {x: 6, y: 17, color: "#4fb225"}]
         held = false;
         hold = null;
         renderHold();
@@ -644,8 +805,13 @@ $(document).ready(function(){
     }
 
     function blockAtRelPos(x,y) {
-        return !!activeTetromino.x+x > settings.pfGridW || activeTetromino.x+x < 1 || activeTetromino.y+y > settings.pfGridH || activeTetromino.y+y < 1 ||
-            passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
+        if (settings.topCollision) {
+            return !!activeTetromino.x+x > settings.pfGridW || activeTetromino.x+x < 1 || activeTetromino.y+y > settings.pfGridH || activeTetromino.y+y < 1 ||
+                passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
+        } else {
+            return !!activeTetromino.x+x > settings.pfGridW || activeTetromino.x+x < 1 || activeTetromino.y+y < 1 ||
+                passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
+        }
     }
 
     function placeTetromino() {
@@ -660,18 +826,18 @@ $(document).ready(function(){
         let tSpin = false;
         if (activeTetromino.tetromino === "T") {
             switch (activeTetromino.rotation) {
-                case 0: if (blockAtRelPos(0,0) && blockAtRelPos(-2,0)) {
-                    if (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2)) tSpin = true;
-                } break;
-                case 1: if (blockAtRelPos(0,0) && blockAtRelPos(0,-2)) {
-                    if (blockAtRelPos(-2,0) || blockAtRelPos(-2,-2)) tSpin = true;
-                } break;
-                case 2: if (blockAtRelPos(-2,-2) && blockAtRelPos(0,-2)) {
-                    if (blockAtRelPos(0,0) || blockAtRelPos(-2,0)) tSpin = true;
-                } break;
-                case 3: if (blockAtRelPos(-2,0) && blockAtRelPos(-2,-2)) {
-                    if (blockAtRelPos(0,0) || blockAtRelPos(0,-2)) tSpin = true;
-                } break;
+                case 0: if ((blockAtRelPos(0,0) && blockAtRelPos(-2,0) && (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2))) ||
+                    blockAtRelPos(-2,-2) && blockAtRelPos(0,-2) && (blockAtRelPos(0,0) || blockAtRelPos(-2,0))) tSpin = true;
+                    break;
+                case 1: if (blockAtRelPos(0,0) && blockAtRelPos(0,-2) && (blockAtRelPos(-2,0) || blockAtRelPos(-2,-2)) ||
+                    blockAtRelPos(-2,0) && blockAtRelPos(-2,-2) && (blockAtRelPos(0,0) || blockAtRelPos(0,-2))) tSpin = true;
+                    break;
+                case 2: if (blockAtRelPos(-2,-2) && blockAtRelPos(0,-2) && (blockAtRelPos(0,0) || blockAtRelPos(-2,0)) ||
+                    blockAtRelPos(0,0) && blockAtRelPos(-2,0) && (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2))) tSpin = true;
+                    break;
+                case 3: if (blockAtRelPos(-2,0) && blockAtRelPos(-2,-2) && (blockAtRelPos(0,0) || blockAtRelPos(0,-2)) ||
+                    blockAtRelPos(0,0) && blockAtRelPos(0,-2) && (blockAtRelPos(-2,0) || blockAtRelPos(-2,-2))) tSpin = true;
+                    break;
             }
         }
 
@@ -748,15 +914,5 @@ $(document).ready(function(){
         },settings.tup);
     }
 
-    $(document).keydown(function (e) {
-        let keycode = (e.keyCode ? e.keyCode : e.which);
-
-        switch (keycode) {
-            case 68:
-                console.log(nextPieces);
-                // console.log(held);
-                break;
-        }
-    })
     startGame();
 })
