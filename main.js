@@ -165,8 +165,6 @@ $(document).ready(function(){
             let tetrominoData = tetrominoes.find(el => el.name === numberToTetromino(tetromino));
             const tetrominoRotation = tetrominoData.rotations[0];
             offsetY = offsetY - 3;
-            let tetrominoOffsetX = 0;
-            let tetrominoOffsetY = 0;
             let color = tetrominoData.color;
 
             const offset = setOffset(numberToTetromino(tetromino));
@@ -277,15 +275,11 @@ $(document).ready(function(){
 
     function checkOutOfBounds(x,y,tetromino,rotation) {
         let activeBlocks = blocksFromTetromino(x, y, tetromino, rotation);
+        if (activeBlocks.block1y < 1 || activeBlocks.block2y < 1 || activeBlocks.block3y < 1 || activeBlocks.block4y < 1 ||
+            activeBlocks.block1x < 1 || activeBlocks.block2x < 1 || activeBlocks.block3x < 1 || activeBlocks.block4x < 1 ||
+            activeBlocks.block1x > settings.pfGridW || activeBlocks.block2x > settings.pfGridW || activeBlocks.block3x > settings.pfGridW || activeBlocks.block4x > settings.pfGridW) return true;
         if (settings.topCollision) {
-            if (activeBlocks.block1y < 1 || activeBlocks.block2y < 1 || activeBlocks.block3y < 1 || activeBlocks.block4y < 1 ||
-                activeBlocks.block1x < 1 || activeBlocks.block2x < 1 || activeBlocks.block3x < 1 || activeBlocks.block4x < 1 ||
-                activeBlocks.block1y > settings.pfGridH || activeBlocks.block2y > settings.pfGridH || activeBlocks.block3y > settings.pfGridH || activeBlocks.block4y > settings.pfGridH ||
-                activeBlocks.block1x > settings.pfGridW || activeBlocks.block2x > settings.pfGridW || activeBlocks.block3x > settings.pfGridW || activeBlocks.block4x > settings.pfGridW) return true;
-        } else {
-            if (activeBlocks.block1y < 1 || activeBlocks.block2y < 1 || activeBlocks.block3y < 1 || activeBlocks.block4y < 1 ||
-                activeBlocks.block1x < 1 || activeBlocks.block2x < 1 || activeBlocks.block3x < 1 || activeBlocks.block4x < 1 ||
-                activeBlocks.block1x > settings.pfGridW || activeBlocks.block2x > settings.pfGridW || activeBlocks.block3x > settings.pfGridW || activeBlocks.block4x > settings.pfGridW) return true;
+            if (activeBlocks.block1y > settings.pfGridH || activeBlocks.block2y > settings.pfGridH || activeBlocks.block3y > settings.pfGridH || activeBlocks.block4y > settings.pfGridH) return true;
         }
     }
 
@@ -513,6 +507,7 @@ $(document).ready(function(){
                                     spawnTetromino(hold);
                                     hold = tmp;
                                     renderHold();
+                                    // noinspection JSUndeclaredVariable
                                     tmp = null;
                                 }
                             }
@@ -624,6 +619,7 @@ $(document).ready(function(){
             clearInterval(gameTick);
             gameRunning = false;
             startButton.html("Start");
+            // noinspection JSUnresolvedVariable
             restartButton.remove();
         }
 

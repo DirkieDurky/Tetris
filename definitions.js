@@ -114,37 +114,6 @@ const SrsData = [{
     ]
 }]
 
-function invert(input, min, max) {
-    let distance = input - min;
-    return max - distance;
-}
-
-function hexToRgbA(hex,opacity = 100){
-    let c;
-    if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-        c = hex.substring(1).split('');
-        if(c.length === 3){
-            c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-        }
-        c = '0x'+c.join('');
-        return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+opacity/100+')';
-    }
-    throw new Error('Bad Hex');
-}
-
-function numberToTetromino(number) {
-    switch (number) {
-        case 1: return "I";
-        case 2: return "J";
-        case 3: return "L";
-        case 4: return "T";
-        case 5: return "S";
-        case 6: return "Z";
-        case 7: return "O";
-        default: throw "Enter valid number";
-    }
-}
-
 let gamePaused = false;
 let gameRunning = false;
 
@@ -270,54 +239,3 @@ if (settings.repeatRate === null) {
     originalDropRepeatRate = settings.repeatRate;
 }
 let dropRepeatRate = originalDropRepeatRate;
-
-/*
-Todo
- - Basic Tetris -
- Make settings tab
- Add 7-bag option
- If hold is off make holding impossible
-
-Todo
- - Finesse Trainer -
- 4*7*10 = 280 possible options
- Make object with all possible piece placements and the best keystrokes needed to put that piece there / A way to calculate best keystrokes per option
- Make selection screen with all possible piece placements / Just a piece selection screen with a way to select option by moving piece to that specific position and rotation
-
-Todo
- - Bonus -
- Add other bagType options
- Add other Rotation System options
- Score display
- Line count
- Tetromino count
- Tetris rate
- Burn amount
- Levels
- Recognise other piece spins
- Recognise combo
- Option to wrap around the board
- Customisable death cause
-    - Not being able to place tetromino
-    - Block placed over specific height
-    - Both
- Custom maps
- Custom pieces
- Custom Rotation systems
- Custom block textures
- Custom sounds
- Workshop with all custom made things
- Undo option
- Multiple holds
- Finesse beeper
- Custom setting profiles
- Custom background image / color
- Save gameState
- Replays
- Garbage
- Custom Tetromino color / texture
- Prevent accidental misdrops option
-
- Restart automatically after dying option
-
-*/

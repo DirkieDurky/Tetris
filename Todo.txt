@@ -1,0 +1,47 @@
+Todo
+ - Basic Tetris -
+ Make settings tab
+ Add 7-bag option
+ If hold is off make holding impossible
+
+Todo
+ - Finesse Trainer -
+ 4*7*10 = 280 possible options
+ Make object with all possible piece placements and the best keystrokes needed to put that piece there / A way to calculate best keystrokes per option
+ Make selection screen with all possible piece placements / Just a piece selection screen with a way to select option by moving piece to that specific position and rotation
+
+Todo
+ - Bonus -
+ Add other bagType options
+ Add other Rotation System options
+ Score display
+ Line count
+ Tetromino count
+ Tetris rate
+ Burn amount
+ Levels
+ Recognise other piece spins
+ Recognise combo
+ Option to wrap around the board
+ Customisable death cause
+    - Not being able to place tetromino
+    - Block placed over specific height
+    - Both
+ Custom maps
+ Custom pieces
+ Custom Rotation systems
+ Custom block textures
+ Custom sounds
+ Workshop with all custom made things
+ Undo option
+ Multiple holds
+ Finesse beeper
+ Custom setting profiles
+ Custom background image / color
+ Save gameState
+ Replays
+ Garbage
+ Custom Tetromino color / texture
+ Prevent accidental misdrops option
+
+ Restart automatically after dying option
