@@ -1,16 +1,19 @@
-Todo
  - Basic Tetris -
+ Change the way I store Tetrominoes
  Make settings tab
  Add 7-bag option
- If hold is off make holding impossible
 
-Todo
  - Finesse Trainer -
  4*7*10 = 280 possible options
  Make object with all possible piece placements and the best keystrokes needed to put that piece there / A way to calculate best keystrokes per option
  Make selection screen with all possible piece placements / Just a piece selection screen with a way to select option by moving piece to that specific position and rotation
+ You can train every possible piece placement as many times as you want. It will keep resetting.
+ Every try you will hear and or see an indicator if you did it right or not
 
-Todo
+ Blind mode:
+ The game will decide 3 piece placements that you will have to execute blindly without any finesse faults.
+ Every try you will hear and or see an indicator if you did it right or not
+
  - Bonus -
  Add other bagType options
  Add other Rotation System options
@@ -43,3 +46,7 @@ Todo
  Garbage
  Custom Tetromino color / texture
  Prevent accidental misdrops option
+ Autopause on focus loss
+
+ !!Set activeTetromino as default for alot of functions
+ Pause button

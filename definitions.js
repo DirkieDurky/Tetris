@@ -1,69 +1,60 @@
-class Tetromino {
-    constructor(name, color, rotations) {
-        this.name = name;
-        this.color = color;
-        this.rotations = rotations;
-    }
-}
-
-class Rotation {
-    constructor(block1x,block1y,block2x,block2y,block3x,block3y,block4x,block4y) {
-        this.block1x = block1x;
-        this.block1y = block1y;
-        this.block2x = block2x;
-        this.block2y = block2y;
-        this.block3x = block3x;
-        this.block3y = block3y;
-        this.block4x = block4x;
-        this.block4y = block4y;
-    }
-}
-
-const tetrominoes = [
-    new Tetromino("I","#009ad6", [
-        new Rotation(-2,-1,-1, -1, 0, -1, 1, -1),
-        new Rotation(0, 0, 0, -1, 0, -2, 0, -3,),
-        new Rotation(-2, -2, -1, -2, 0, -2, 1, -2),
-        new Rotation(-1, 0, -1, -1, -1, -2, -1, -3,)
-    ]),
-    new Tetromino("J","#213cc3", [
-        new Rotation(-2,0,-2,-1,-1,-1,0,-1),
-        new Rotation(-1,0,0,0,-1,-1,-1,-2),
-        new Rotation(-2,-1,-1,-1,0,-1,0,-2),
-        new Rotation(-1,0,-1,-1,-1,-2,-2,-2)
-    ]),
-    new Tetromino("L","#e85b00", [
-        new Rotation(0,0,-2,-1,-1,-1,0,-1),
-        new Rotation(-1,0,-1,-1,-1,-2,0,-2),
-        new Rotation(-2,-1,-1,-1,0,-1,-2,-2),
-        new Rotation(-2,0,-1,0,-1,-1,-1,-2)
-    ]),
-    new Tetromino("T","#b32487", [
-        new Rotation(-1,0,-2,-1,-1,-1,0,-1),
-        new Rotation(-1,0,-1,-1,0,-1,-1,-2),
-        new Rotation(-2,-1,-1,-1,0,-1,-1,-2),
-        new Rotation(-1,0,-2,-1,-1,-1,-1,-2)
-    ]),
-    new Tetromino("S","#4fb225", [
-        new Rotation(-1,0,0,0,-2,-1,-1,-1),
-        new Rotation(-1,0,-1,-1,0,-1,0,-2),
-        new Rotation(-1,-1,0,-1,-2,-2,-1,-2),
-        new Rotation(-2,0,-2,-1,-1,-1,-1,-2)
-    ]),
-    new Tetromino("Z","#dc0732", [
-        new Rotation(-2,0,-1,0,-1,-1,0,-1),
-        new Rotation(0,0,-1,-1,0,-1,-1,-2),
-        new Rotation(-2,-1,-1,-1,-1,-2,0,-2),
-        new Rotation(-1,0,-2,-1,-1,-1,-2,-2)
-    ]),
-    new Tetromino("O","#e6a01a", [
-        new Rotation(-1,0,0,0,-1,-1,0,-1),
-        new Rotation(-1,0,0,0,-1,-1,0,-1),
-        new Rotation(-1,0,0,0,-1,-1,0,-1),
-        new Rotation(-1,0,0,0,-1,-1,0,-1)
-    ])
-];
-
+const tetrominoes = [{
+    name:"I", color: "#009ad6",
+    rotations: [
+        [[-2,-1],[-1,-1],[0,-1],[1,-1]],
+        [[0,0],[0,-1],[0,-2],[0,-3]],
+        [[-2,-2],[-1,-2],[0,-2],[1,-2]],
+        [[-1,0],[-1,-1],[-1,-2],[-1,-3]]
+    ]
+},{
+    name:"J", color: "#213cc3",
+    rotations: [
+        [[-2,0],[-2,-1],[-1,-1],[0,-1]],
+        [[-1,0],[0,0],[-1,-1],[-1,-2]],
+        [[-2,-1],[-1,-1],[0,-1],[0,-2]],
+        [[-1,0],[-1,-1],[-1,-2],[-2,-2]]
+    ]
+},{
+    name:"L", color: "#e85b00",
+    rotations: [
+        [[0,0],[-2,-1],[-1,-1],[0,-1]],
+        [[-1,0],[-1,-1],[-1,-2],[0,-2]],
+        [[-2,-1],[-1,-1],[0,-1],[-2,-2]],
+        [[-2,0],[-1,0],[-1,-1],[-1,-2]],
+    ]
+},{
+    name:"T", color: "#b32487",
+    rotations: [
+        [[-1,0],[-2,-1],[-1,-1],[0,-1]],
+        [[-1,0],[-1,-1],[0,-1],[-1,-2]],
+        [[-2,-1],[-1,-1],[0,-1],[-1,-2]],
+        [[-1,0],[-2,-1],[-1,-1],[-1,-2]]
+    ]
+},{
+    name:"S", color: "#4fb225",
+    rotations: [
+        [[-1,0],[0,0],[-2,-1],[-1,-1]],
+        [[-1,0],[-1,-1],[0,-1],[0,-2]],
+        [[-1,-1],[0,-1],[-2,-2],[-1,-2]],
+        [[-2,0],[-2,-1],[-1,-1],[-1,-2]]
+    ]
+},{
+    name:"Z", color: "#dc0732",
+    rotations: [
+        [[-2,0],[-1,0],[-1,-1],[0,-1]],
+        [[0,0],[-1,-1],[0,-1],[-1,-2]],
+        [[-2,-1],[-1,-1],[-1,-2],[0,-2]],
+        [[-1,0],[-2,-1],[-1,-1],[-2,-2]]
+    ]
+},{
+    name:"O", color: "#e6a01a",
+    rotations: [
+        [[-1,0],[0,0],[-1,-1],[0,-1]],
+        [[-1,0],[0,0],[-1,-1],[0,-1]],
+        [[-1,0],[0,0],[-1,-1],[0,-1]],
+        [[-1,0],[0,0],[-1,-1],[0,-1]]
+    ]
+}];
 const SrsData = [{
     name:["T","J","L","S","Z"],
     rotations:[
@@ -171,7 +162,14 @@ let settings = {
     trueRandom
     7-bag
     14-bag
-    classic
+    NES Tetris / Classic = {
+    The NES Tetris randomizer is super basic. Basically it rolls an 8 sided die, 1-7 being the 7 pieces and 8 being "reroll".
+    If you get the same piece as the last piece you got, or you hit the reroll number, It'll roll a 2nd 7 sided die.
+    This time you can get the same piece as your previous one and the roll is final.
+    }
+    TGM
+    TGM2
+    TGM3
     */
     topCollision: false, //Determines if the top of the playField has a collision !!If this option is true make sure to set spawnposition y to gridHeight or below or no pieces will be able to spawn
 
@@ -205,11 +203,11 @@ settings.gravity = 10;
 settings.sds = 0;
 settings.tudp = 999999999;
 settings.pfGridW = 10;
-settings.spawnPosY = 21;
+settings.spawnPosY = 20;
 settings.rswpp = true;
 settings.hold = true;
 settings.nextAmount = 6;
-settings.autoRestart = true;
+settings.autoRestart = false;
 
 if (settings.nextAmount > 6) {
     throw "Max nextAmount is 6";
