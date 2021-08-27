@@ -48,5 +48,6 @@
  Prevent accidental misdrops option
  Autopause on focus loss
 
- !!Set activeTetromino as default for alot of functions
+ Set activeTetromino as default for alot of functions
  Pause button
+ Get piece from array like pieces[1] = "I" instead of using numberToPiece()

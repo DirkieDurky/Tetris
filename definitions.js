@@ -1,4 +1,4 @@
-const tetrominoes = [{
+const pieces = [{
     name:"I", color: "#009ad6",
     rotations: [
         [[-2,-1],[-1,-1],[0,-1],[1,-1]],
@@ -110,8 +110,8 @@ let gameRunning = false;
 
 let passiveBlocks = [];
 
-let activeTetromino = null;
-let ghostTetromino = null;
+let activePiece = null;
+let ghostPiece = null;
 
 let tmp = null;
 let hold = null;
@@ -157,19 +157,16 @@ let settings = {
     rswpp: true, //Remove softDrop when piece placed
     ghostPiece: true,
     nesTetrisRotations: false,
-    randomBagType: "trueRandom",
+    pieceRandomiser: 1,
     /*Options:
-    trueRandom
-    7-bag
-    14-bag
-    NES Tetris / Classic = {
-    The NES Tetris randomizer is super basic. Basically it rolls an 8 sided die, 1-7 being the 7 pieces and 8 being "reroll".
-    If you get the same piece as the last piece you got, or you hit the reroll number, It'll roll a 2nd 7 sided die.
-    This time you can get the same piece as your previous one and the roll is final.
-    }
-    TGM
-    TGM2
-    TGM3
+    0=trueRandom
+    1=7-bag
+    2=14-bag
+    3=NES Tetris / Classic
+    4=TGM
+    5=TGM2
+    6=TGM3
+    7=GameBoy
     */
     topCollision: false, //Determines if the top of the playField has a collision !!If this option is true make sure to set spawnposition y to gridHeight or below or no pieces will be able to spawn
 

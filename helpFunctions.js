@@ -18,7 +18,7 @@ function hexToRgbA(hex,opacity = 100){
     throw new Error('Bad Hex');
 }
 
-function numberToTetromino(number) {
+function numberToPiece(number) {
     switch (number) {
         case 1: return "I";
         case 2: return "J";

@@ -83,41 +83,41 @@ $(document).ready(function(){
         ctx.fillRect((w/gridW)*(x-1),(h/gridH*(y-1)),w/gridW,h/gridH);
     }
 
-    function drawTetromino(ctx = pfCtx,x = activeTetromino.x,y = activeTetromino.y,tetromino = activeTetromino.tetromino,
-                           rotation = activeTetromino.rotation,color,opacity = 100){
-        let tetrominoData = tetrominoes.find(el => el.name === tetromino);
-        console.log(x);
-        let tetrominoRotation = tetrominoData.rotations[rotation];
+    function drawPiece(ctx = pfCtx,x = activePiece.x,y = activePiece.y,piece = activePiece.piece,
+                           rotation = activePiece.rotation,color,opacity = 100){
+        let pieceData = pieces.find(el => el.name === piece);
+        let pieceRotation = pieceData.rotations[rotation];
         if (typeof color === "undefined") {
-            color = tetrominoData.color;
+            color = pieceData.color;
         }
 
-        for (let i=0;i<tetrominoRotation.length;i++) {
-            drawBlock(ctx,x+tetrominoRotation[i][0],y+tetrominoRotation[i][1],color,opacity);
+        for (let i=0;i<pieceRotation.length;i++) {
+            drawBlock(ctx,x+pieceRotation[i][0],y+pieceRotation[i][1],color,opacity);
         }
     }
 
-    function setOffset(tetromino) {
+    function setOffset(piece) {
         let result = {
             y:0,
             x:0
         };
 
-        switch (tetromino) {
+        switch (piece) {
             case "I":
                 result.y = 0.5;
             case "O":
                 result.x = -0.5
                 break;
         }
+
         return result;
     }
 
     function renderHold() {
         clearCanvas(hbCtx,holdBox);
         if (hold !== null) {
-            let tetrominoData = tetrominoes.find(el => el.name === hold);
-            const tetrominoRotation = tetrominoData.rotations[0];
+            let pieceData = pieces.find(el => el.name === hold);
+            const pieceRotation = pieceData.rotations[0];
             const offsetX = 4;
             const offsetY = 3;
 
@@ -125,13 +125,13 @@ $(document).ready(function(){
             if (held) {
                 color = settings.heldColor
             } else {
-                color = tetrominoData.color;
+                color = pieceData.color;
             }
 
             const offset = setOffset(hold);
 
-            for (let i=0;i<tetrominoRotation.length;i++) {
-                drawBlock(hbCtx, offsetX + offset.x + tetrominoRotation[i][0], offsetY + offset.y + tetrominoRotation[i][1],color);
+            for (let i=0;i<pieceRotation.length;i++) {
+                drawBlock(hbCtx, offsetX + offset.x + pieceRotation[i][0], offsetY + offset.y + pieceRotation[i][1],color);
             }
         }
     }
@@ -141,17 +141,16 @@ $(document).ready(function(){
 
         const offsetX = 4;
         let offsetY = 3 + 3*settings.nextAmount;
-
-        nextPieces.forEach(tetromino => {
-            let tetrominoData = tetrominoes.find(el => el.name === numberToTetromino(tetromino));
-            const tetrominoRotation = tetrominoData.rotations[0];
+        nextPieces.forEach(piece => {
+            const pieceData = pieces.find(el => el.name === piece);
+            const pieceRotation = pieceData.rotations[0];
             offsetY = offsetY - 3;
-            let color = tetrominoData.color;
+            let color = pieceData.color;
 
-            const offset = setOffset(numberToTetromino(tetromino));
+            const offset = setOffset(piece);
 
-            for (let i=0;i<tetrominoRotation.length;i++) {
-                drawBlock(nbCtx, offsetX + offset.x + tetrominoRotation[i][0], offsetY + offset.y + tetrominoRotation[i][1],color);
+            for (let i=0;i<pieceRotation.length;i++) {
+                drawBlock(nbCtx, offsetX + offset.x + pieceRotation[i][0], offsetY + offset.y + pieceRotation[i][1],color);
             }
         })
     }
@@ -161,42 +160,29 @@ $(document).ready(function(){
 
         //Get ghost piece position
         if (settings.ghostPiece) {
-            ghostTetromino = {
-                y: activeTetromino.y,
+            ghostPiece = {
+                y: activePiece.y,
             }
-            while (!checkCollision("down", activeTetromino.x, ghostTetromino.y, activeTetromino.tetromino, activeTetromino.rotation)) {
-                ghostTetromino.y--;
+            while (!checkCollision("down", activePiece.x, ghostPiece.y, activePiece.piece, activePiece.rotation)) {
+                ghostPiece.y--;
             }
-            drawTetromino(undefined,undefined, ghostTetromino.y, undefined, undefined, settings.ghostPieceColor, settings.ghostPieceOpacity);
+            drawPiece(undefined,undefined, ghostPiece.y, undefined, undefined, settings.ghostPieceColor, settings.ghostPieceOpacity);
         }
-        drawTetromino();
+        drawPiece();
         for (let i=0;i<passiveBlocks.length;i++) {
             drawBlock(pfCtx,passiveBlocks[i].x,passiveBlocks[i].y,passiveBlocks[i].color);
         }
     }
 
-    function numberToTetromino(number) {
-        switch (number) {
-            case 1: return "I";
-            case 2: return "J";
-            case 3: return "L";
-            case 4: return "T";
-            case 5: return "S";
-            case 6: return "Z";
-            case 7: return "O";
-            default: throw "Invalid number";
-        }
-    }
-
-    function spawnTetromino(tetromino) {
-        if (Number.isInteger(tetromino)) {
-            tetromino = numberToTetromino(tetromino);
+    function spawnPiece(piece) {
+        if (Number.isInteger(piece)) {
+            piece = pieceBag[piece];
         }
 
-        activeTetromino = {
+        activePiece = {
             x: settings.spawnPosX,
             y: settings.spawnPosY,
-            tetromino: tetromino,
+            piece: piece,
             rotation: 0
         }
         render();
@@ -231,61 +217,61 @@ $(document).ready(function(){
         }
     }
 
-    function checkOutOfBounds(x,y,tetromino,rotation) {
-        let tetrominoRotation = tetrominoes.find(el => el.name === tetromino).rotations[rotation];
+    function checkOutOfBounds(x,y,piece,rotation) {
+        let pieceRotation = pieces.find(el => el.name === piece).rotations[rotation];
         let outOfBounds = false;
-        for (let i=0;i<tetrominoRotation.length;i++) {
-            if (x+tetrominoRotation[i][0] < 1) outOfBounds = true; else
-            if (x+tetrominoRotation[i][0] > settings.pfGridW) outOfBounds = true; else
-            if (y+tetrominoRotation[i][1] < 1) outOfBounds = true; else
+        for (let i=0;i<pieceRotation.length;i++) {
+            if (x+pieceRotation[i][0] < 1) outOfBounds = true; else
+            if (x+pieceRotation[i][0] > settings.pfGridW) outOfBounds = true; else
+            if (y+pieceRotation[i][1] < 1) outOfBounds = true; else
             if (settings.topCollision) {
-                if (y+tetrominoRotation[i][1] > settings.pfGridH) outOfBounds = true;
+                if (y+pieceRotation[i][1] > settings.pfGridH) outOfBounds = true;
             }
         }
         return outOfBounds;
     }
 
-    function checkBlockCollision(x,y,tetromino,rotation) {
-        let tetrominoRotation = tetrominoes.find(el => el.name === tetromino).rotations[rotation];
-        for (let i=0;i<tetrominoRotation.length;i++) {
-            if (blockAtPos(x+tetrominoRotation[i][0],y+tetrominoRotation[i][1])) return true;
+    function checkBlockCollision(x,y,piece,rotation) {
+        let pieceRotation = pieces.find(el => el.name === piece).rotations[rotation];
+        for (let i=0;i<pieceRotation.length;i++) {
+            if (blockAtPos(x+pieceRotation[i][0],y+pieceRotation[i][1])) return true;
         }
     }
 
-    function checkCollision(mode, x = activeTetromino.x, y = activeTetromino.y, tetromino = activeTetromino.tetromino, rotation = activeTetromino.rotation){
-        let tetrominoRotations = tetrominoes.find(el => el.name === tetromino).rotations[rotation];
+    function checkCollision(mode, x = activePiece.x, y = activePiece.y, piece = activePiece.piece, rotation = activePiece.rotation){
+        let pieceRotations = pieces.find(el => el.name === piece).rotations[rotation];
         let VirtRotation;
         switch (mode) {
             case "down":
-                for (let i=0;i<tetrominoRotations.length;i++) if (y+tetrominoRotations[i][1]-1 < 1) return true;
-                if (checkBlockCollision(x,y-1,tetromino,rotation)) return true;
+                for (let i=0;i<pieceRotations.length;i++) if (y+pieceRotations[i][1]-1 < 1) return true;
+                if (checkBlockCollision(x,y-1,piece,rotation)) return true;
                 break;
             case "left":
-                for (let i=0;i<tetrominoRotations.length;i++) if (x+tetrominoRotations[i][0]-1 < 1) return true;
-                if (checkBlockCollision(x-1,y,tetromino,rotation)) return true;
+                for (let i=0;i<pieceRotations.length;i++) if (x+pieceRotations[i][0]-1 < 1) return true;
+                if (checkBlockCollision(x-1,y,piece,rotation)) return true;
                 break;
             case "right":
-                for (let i=0;i<tetrominoRotations.length;i++) if (x+tetrominoRotations[i][0]+1 > settings.pfGridW) return true;
-                if (checkBlockCollision(x+1,y,tetromino,rotation)) return true;
+                for (let i=0;i<pieceRotations.length;i++) if (x+pieceRotations[i][0]+1 > settings.pfGridW) return true;
+                if (checkBlockCollision(x+1,y,piece,rotation)) return true;
                 break;
             case "rotateCw":
                 VirtRotation = virtRotate(rotation, "cw");
-                if (checkOutOfBounds(x,y,tetromino,VirtRotation) ||
-                checkBlockCollision(x,y,tetromino,VirtRotation)) return true;
+                if (checkOutOfBounds(x,y,piece,VirtRotation) ||
+                checkBlockCollision(x,y,piece,VirtRotation)) return true;
                 break;
             case "rotateCcw":
                 VirtRotation = virtRotate(rotation, "ccw");
-                if (checkOutOfBounds(x,y,tetromino,VirtRotation)||
-                    checkBlockCollision(x,y,tetromino,VirtRotation)) return true;
+                if (checkOutOfBounds(x,y,piece,VirtRotation)||
+                    checkBlockCollision(x,y,piece,VirtRotation)) return true;
                 break;
             case "rotate180":
                 VirtRotation = virtRotate(rotation, "180");
-                if (checkOutOfBounds(x,y,tetromino,VirtRotation)||
-                    checkBlockCollision(x,y,tetromino,VirtRotation)) return true;
+                if (checkOutOfBounds(x,y,piece,VirtRotation)||
+                    checkBlockCollision(x,y,piece,VirtRotation)) return true;
                 break;
             case "all":
-                if (checkOutOfBounds(x,y,tetromino,rotation) ||
-                    checkBlockCollision(x,y,tetromino,rotation)) return true;
+                if (checkOutOfBounds(x,y,piece,rotation) ||
+                    checkBlockCollision(x,y,piece,rotation)) return true;
                 break;
             default:
                 throw "Enter a valid mode";
@@ -293,9 +279,9 @@ $(document).ready(function(){
     }
 
     function tryPosition(x,y,rotation) {
-        // console.log(`Trying position ${activeTetromino.x+x},${activeTetromino.y+y} with tetromino ${activeTetromino.tetromino} at rotation ${rotation}...`)
-        return !(checkCollision("all",activeTetromino.x+x,activeTetromino.y+y,activeTetromino.tetromino,rotation))
-        // if (checkCollision("all",activeTetromino.x+x,activeTetromino.y+y,activeTetromino.tetromino,rotation)) {
+        // console.log(`Trying position ${activePiece.x+x},${activePiece.y+y} with piece ${activePiece.piece} at rotation ${rotation}...`)
+        return !(checkCollision("all",activePiece.x+x,activePiece.y+y,activePiece.piece,rotation))
+        // if (checkCollision("all",activePiece.x+x,activePiece.y+y,activePiece.piece,rotation)) {
         //     console.log('Not possible');
         //     return false;
         // } else {
@@ -305,9 +291,9 @@ $(document).ready(function(){
     }
 
     function rotate(direction) {
-        if (activeTetromino.tetromino === "O") return;
+        if (activePiece.piece === "O") return;
 
-        rotationName = activeTetromino.rotation+"-"+virtRotate(activeTetromino.rotation,direction);
+        rotationName = activePiece.rotation+"-"+virtRotate(activePiece.rotation,direction);
         let rotation;
         switch (rotationName) {
             case "0-1": rotation = 0; break;
@@ -323,12 +309,12 @@ $(document).ready(function(){
             case "1-3": rotation = 10; break;
             case "3-1": rotation = 11; break;
         }
-        let neededSrsData = SrsData.find(el => el.name.includes(activeTetromino.tetromino)).rotations[rotation];
+        let neededSrsData = SrsData.find(el => el.name.includes(activePiece.piece)).rotations[rotation];
         for (let i=0;i<neededSrsData.length;i++) {
-            if (tryPosition(neededSrsData[i][0],neededSrsData[i][1],virtRotate(activeTetromino.rotation,direction))) {
-                activeTetromino.x += neededSrsData[i][0];
-                activeTetromino.y += neededSrsData[i][1];
-                activeTetromino.rotation = virtRotate(activeTetromino.rotation,direction);
+            if (tryPosition(neededSrsData[i][0],neededSrsData[i][1],virtRotate(activePiece.rotation,direction))) {
+                activePiece.x += neededSrsData[i][0];
+                activePiece.y += neededSrsData[i][1];
+                activePiece.rotation = virtRotate(activePiece.rotation,direction);
                 return;
             }
         }
@@ -350,9 +336,9 @@ $(document).ready(function(){
         }
         while (!checkCollision(side)) {
             switch (side) {
-                case "left": activeTetromino.x--;
+                case "left": activePiece.x--;
                 break;
-                case "right": activeTetromino.x++;
+                case "right": activePiece.x++;
                 break;
             }
         }
@@ -413,7 +399,7 @@ $(document).ready(function(){
                     case settings.controls.moveRight:
                         das(keycode, function () {
                             if (checkCollision("right")) return;
-                            activeTetromino.x++;
+                            activePiece.x++;
                             dropInstantly();
                             render();
                             clearTimeout(timeout[settings.controls.moveLeft]);
@@ -423,7 +409,7 @@ $(document).ready(function(){
                     case settings.controls.moveLeft:
                         das(keycode, function () {
                             if (checkCollision("left")) return;
-                            activeTetromino.x--;
+                            activePiece.x--;
                             dropInstantly();
                             render();
                             clearTimeout(timeout[settings.controls.moveRight]);
@@ -456,14 +442,14 @@ $(document).ready(function(){
                             if (!held) {
                                 held = true;
                                 if (hold == null) {
-                                    hold = activeTetromino.tetromino;
+                                    hold = activePiece.piece;
                                     renderHold();
-                                    activeTetromino = null;
+                                    activePiece = null;
                                     spawnNextPiece();
                                 } else {
-                                    tmp = activeTetromino.tetromino;
-                                    activeTetromino = null;
-                                    spawnTetromino(hold);
+                                    tmp = activePiece.piece;
+                                    activePiece = null;
+                                    spawnPiece(hold);
                                     hold = tmp;
                                     renderHold();
                                     // noinspection JSUndeclaredVariable
@@ -487,7 +473,7 @@ $(document).ready(function(){
                                     render();
                                     return;
                                 }
-                                activeTetromino.y--;
+                                activePiece.y--;
                                 render();
                             }, settings.sds);
                         } else {
@@ -497,12 +483,9 @@ $(document).ready(function(){
                         return true;
                     case settings.controls.hardDrop:
                         while (!checkCollision("down")) {
-                            activeTetromino.y--;
+                            activePiece.y--;
                         }
-                        placeTetromino();
-                        return true;
-                    case settings.controls.restart:
-                        startGame();
+                        placePiece();
                         return true;
                 }
             }
@@ -516,7 +499,7 @@ $(document).ready(function(){
         if (settings.sds < 1) {
             if (softDropHeld) {
                 while (!checkCollision("down")) {
-                    activeTetromino.y--;
+                    activePiece.y--;
                 }
                 clearInterval(gameTick);
                 startInterval();
@@ -555,35 +538,34 @@ $(document).ready(function(){
     let gameTick;
     let tup = null;
     let tudp = null;
-    let nextTetromino;
+    let nextPiece;
 
     function spawnNextPiece() {
         if (settings.nextAmount > 0) {
-            nextTetromino = numberToTetromino(nextPieces[0])
+            nextPiece = nextPieces[0];
         } else {
-            nextTetromino = numberToTetromino(Math.floor(Math.random() * tetrominoes.length + 1));
+            nextPiece = addNextPiece();
         }
-        if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY, nextTetromino, 0)) {
-            if (settings.nextAmount > 0) {
-                spawnTetromino(nextPieces[0]);
-                nextPieces.splice(0, 1);
-                nextPieces.push(Math.floor(Math.random() * tetrominoes.length + 1));
+            if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY, nextPiece, 0)) {
+                if (settings.nextAmount > 0) {
+                    spawnPiece(nextPieces[0]);
+                    nextPieces.shift();
+                    nextPieces.push(addNextPiece());
+                } else {
+                    spawnPiece(nextPiece);
+                }
+                renderNext();
             } else {
-                spawnTetromino(nextTetromino);
+                clearInterval(gameTick);
+                gameRunning = false;
+                startButton.html("Start");
+                if (settings.autoRestart) {
+                    startGame();
+                } else {
+                    // noinspection JSUnresolvedVariable
+                    restartButton.remove();
+                }
             }
-            renderNext();
-        } else {
-            clearInterval(gameTick);
-            gameRunning = false;
-            startButton.html("Start");
-            if (settings.autoRestart) {
-                startGame();
-            } else {
-                // noinspection JSUnresolvedVariable
-                restartButton.remove();
-            }
-        }
-
         if (heldSide.length !== 0) {
             moveInstantly(heldSide[0])
         }
@@ -602,21 +584,35 @@ $(document).ready(function(){
                                 tudp = setTimeout(function () {
                                     clearInterval(tup);
                                     if (checkCollision("down")) {
-                                        placeTetromino();
+                                        placePiece();
                                     } else {
                                         tudp = null;
                                     }
                                 }, settings.tudp);
                             }
                         } else {
-                            placeTetromino();
+                            placePiece();
                         }
                     } else {
-                        activeTetromino.y--;
+                        activePiece.y--;
                     }
                     render();
                 }
             }, dropRepeatRate)
+        }
+    }
+
+    function addNextPiece() {
+        switch (settings.pieceRandomiser) {
+            case 0: return trueRandom().next().value;
+            case 1: return bag(7).next().value;
+            case 2: return bag(14).next().value;
+            case 3: return classic().next().value;
+            case 4: return tgm().next().value;
+            case 5: return tgm2().next().value;
+            case 6: return tgm3().next().value;
+            case 7: return gameBoy().next().value;
+            default: throw "Invalid pieceRandomiser";
         }
     }
 
@@ -633,11 +629,11 @@ $(document).ready(function(){
 
         nextPieces = [];
         for (let i=0;i<settings.nextAmount;i++) {
-            nextPieces.push(Math.floor(Math.random() * tetrominoes.length+1));
+            nextPieces.push(addNextPiece());
         }
 
-        startInterval();
         spawnNextPiece();
+        startInterval();
     }
 
     function blockAtPos(x,y) {
@@ -646,28 +642,28 @@ $(document).ready(function(){
 
     function blockAtRelPos(x,y) {
         if (settings.topCollision) {
-            return !!activeTetromino.x+x > settings.pfGridW || activeTetromino.x+x < 1 || activeTetromino.y+y > settings.pfGridH || activeTetromino.y+y < 1 ||
-                passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
+            return !!activePiece.x+x > settings.pfGridW || activePiece.x+x < 1 || activePiece.y+y > settings.pfGridH || activePiece.y+y < 1 ||
+                passiveBlocks.find(el => el.x === activePiece.x+x && el.y === activePiece.y+y);
         } else {
-            return !!activeTetromino.x+x > settings.pfGridW || activeTetromino.x+x < 1 || activeTetromino.y+y < 1 ||
-                passiveBlocks.find(el => el.x === activeTetromino.x+x && el.y === activeTetromino.y+y);
+            return !!activePiece.x+x > settings.pfGridW || activePiece.x+x < 1 || activePiece.y+y < 1 ||
+                passiveBlocks.find(el => el.x === activePiece.x+x && el.y === activePiece.y+y);
         }
     }
 
-    function placeTetromino() {
-        let tetrominoData = tetrominoes.find(el => el.name === activeTetromino.tetromino).rotations[activeTetromino.rotation];
-        let x = activeTetromino.x;
-        let y = activeTetromino.y;
-        // let activeBlocks = blocksFromTetromino(activeTetromino.x, activeTetromino.y, activeTetromino.tetromino, activeTetromino.rotation);
-        const color = tetrominoes.find(el => el.name === activeTetromino.tetromino).color;
-        //Add all blocks of active Tetromino to passiveBlocks array
-        for (let i=0;i<tetrominoData.length;i++) {
-            passiveBlocks.push({x: x+tetrominoData[i][0], y: y+tetrominoData[i][1], color: color});
+    function placePiece() {
+        let pieceData = pieces.find(el => el.name === activePiece.piece).rotations[activePiece.rotation];
+        let x = activePiece.x;
+        let y = activePiece.y;
+        // let activeBlocks = blocksFromPiece(activePiece.x, activePiece.y, activePiece.piece, activePiece.rotation);
+        const color = pieces.find(el => el.name === activePiece.piece).color;
+        //Add all blocks of active Piece to passiveBlocks array
+        for (let i=0;i<pieceData.length;i++) {
+            passiveBlocks.push({x: x+pieceData[i][0], y: y+pieceData[i][1], color: color});
         }
         //Check for T-spin
         let tSpin = false;
-        if (activeTetromino.tetromino === "T") {
-            switch (activeTetromino.rotation) {
+        if (activePiece.piece === "T") {
+            switch (activePiece.rotation) {
                 //2 blocks in the 'armpit'                                        and 1 on the flat side
                 case 0: if ((blockAtRelPos(0,0) && blockAtRelPos(-2,0) && (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2))) ||
                     //2 blocks on the flat side,
@@ -756,7 +752,7 @@ $(document).ready(function(){
         tup = setTimeout(function(){
             clearInterval(tudp);
             if (checkCollision("down")) {
-                placeTetromino();
+                placePiece();
             } else {
                 tup = null;
             }
