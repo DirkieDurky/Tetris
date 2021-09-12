@@ -375,15 +375,25 @@ $(document).ready(function(){
     $(document).keydown(function (e) {
         let keycode = (e.keyCode ? e.keyCode : e.which);
         if (keycode === settings.controls.restart) {
-            if (!gameRunning) {
-                startButton.html("Pause");
-                startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
-                const restartButton = $("#restartButton");
-                restartButton.click(function(){
-                    startGame();
-                })
+            // if (!gameRunning) {
+            //     startButton.html("Pause");
+            //     startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
+            //     const restartButton = $("#restartButton");
+            //     restartButton.click(function(){
+            //         startGame();
+            //     })
+            // }
+
+        } else if (gameRunning) {
+            if (keycode === settings.controls.pause) {
+                pause();
+            } else if (keycode === settings.controls.restart) {
+                startGame();
             }
-            startGame();
+        } else {
+            if (keycode === settings.controls.start) {
+                start();
+            }
         }
         if (!gamePaused && gameRunning) {
             if (down.includes(keycode)) return;
@@ -399,6 +409,7 @@ $(document).ready(function(){
                     case settings.controls.moveRight:
                         das(keycode, function () {
                             if (checkCollision("right")) return;
+                            if (gamePaused) return;
                             activePiece.x++;
                             dropInstantly();
                             render();
@@ -409,6 +420,7 @@ $(document).ready(function(){
                     case settings.controls.moveLeft:
                         das(keycode, function () {
                             if (checkCollision("left")) return;
+                            if (gamePaused) return;
                             activePiece.x--;
                             dropInstantly();
                             render();
@@ -759,22 +771,30 @@ $(document).ready(function(){
         },settings.tup);
     }
 
+    function pause() {
+        gamePaused = !gamePaused;
+        if (gamePaused) {
+            startButton.html("Continue");
+        } else {
+            startButton.html("Pause");
+        }
+    }
+
+    function start() {
+        startButton.html("Pause");
+        startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
+        const restartButton = $("#restartButton");
+        startGame();
+        restartButton.click(function(){
+            startGame();
+        })
+    }
+
     startButton.click(function (){
         if (!gameRunning) {
-            startButton.html("Pause");
-            startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
-            const restartButton = $("#restartButton");
-            startGame();
-            restartButton.click(function(){
-                startGame();
-            })
+            start();
         } else {
-            gamePaused = !gamePaused;
-            if (gamePaused) {
-                startButton.html("Continue");
-            } else {
-                startButton.html("Pause");
-            }
+            pause();
         }
     });
 })

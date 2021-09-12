@@ -124,3 +124,5 @@ function* gameBoy() {
 function* bastet() {
     //https://github.com/fph/bastet/
 }
+
+//Possibly more bags to add: https://news.ycombinator.com/item?id=20872110

@@ -189,7 +189,9 @@ let settings = {
         rotateCW: 67,
         rotate180: 86,
         hardDrop: 90,
-        restart: 82
+        restart: 82,
+        pause: 27,
+        start: 13
     }
 }
 
