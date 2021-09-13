@@ -374,20 +374,11 @@ $(document).ready(function(){
     let softDrop;
     $(document).keydown(function (e) {
         let keycode = (e.keyCode ? e.keyCode : e.which);
-        if (keycode === settings.controls.restart) {
-            // if (!gameRunning) {
-            //     startButton.html("Pause");
-            //     startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
-            //     const restartButton = $("#restartButton");
-            //     restartButton.click(function(){
-            //         startGame();
-            //     })
-            // }
-
-        } else if (gameRunning) {
+        if (gameRunning) {
             if (keycode === settings.controls.pause) {
                 pause();
-            } else if (keycode === settings.controls.restart) {
+            }
+            if (keycode === settings.controls.restart) {
                 startGame();
             }
         } else {
