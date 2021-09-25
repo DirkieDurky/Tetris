@@ -24,6 +24,7 @@ $(document).ready(function(){
     nextBox.style.height = nextH+"px";
 
     const startButton = $("#startButton");
+    let restartButton = null;
 
     if (!settings.hold) {
         $("#holdBox").remove();
@@ -379,7 +380,7 @@ $(document).ready(function(){
                 pause();
             }
             if (keycode === settings.controls.restart) {
-                startGame();
+                restart();
             }
         } else {
             if (keycode === settings.controls.start) {
@@ -565,8 +566,9 @@ $(document).ready(function(){
                 if (settings.autoRestart) {
                     startGame();
                 } else {
-                    // noinspection JSUnresolvedVariable
-                    restartButton.remove();
+                    if (restartButton != null){
+                        restartButton.remove();
+                    }
                 }
             }
         if (heldSide.length !== 0) {
@@ -774,10 +776,10 @@ $(document).ready(function(){
     function start() {
         startButton.html("Pause");
         startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
-        const restartButton = $("#restartButton");
+        restartButton = $("#restartButton");
         startGame();
         restartButton.click(function(){
-            startGame();
+            restart();
         })
     }
 
@@ -788,4 +790,10 @@ $(document).ready(function(){
             pause();
         }
     });
+
+    function restart() {
+        sevenBag = [];
+        startGame();
+    }
+    document.getElementById("")
 })

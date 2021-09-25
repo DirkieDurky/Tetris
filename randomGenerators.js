@@ -1,4 +1,5 @@
 const pieceBag = ["I", "J", "L", "T", "S", "Z", "O"];
+let sevenBag = [];
 
 function* trueRandom() {
     while (true) {
@@ -20,8 +21,6 @@ function* classic() {
     }
 }
 
-let sevenBag = [];
-
 function* bag(bagAmount) {
     while (true) {
         if (sevenBag.length < 1) {
@@ -35,6 +34,7 @@ function* bag(bagAmount) {
         }
         let piece = sevenBag[Math.floor(Math.random() * sevenBag.length)]
         sevenBag.splice(sevenBag.indexOf(piece),1);
+        // console.log(`Got ${piece} from bag. Left of bag: ${sevenBag}`)
         yield piece;
     }
 }

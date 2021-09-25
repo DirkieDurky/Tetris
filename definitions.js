@@ -201,7 +201,6 @@ settings.arr = 0;
 settings.gravity = 10;
 settings.sds = 0;
 settings.tudp = 999999999;
-settings.pfGridW = 10;
 settings.spawnPosY = 20;
 settings.rswpp = true;
 settings.hold = true;
