@@ -608,18 +608,17 @@ $(document).ready(function(){
     }
 
     function addNextPiece() {
-        // switch (settings.pieceRandomiser) {
-        //     case 0: return trueRandom().next().value;
-        //     case 1: return bag(7).next().value;
-        //     case 2: return bag(14).next().value;
-        //     case 3: return classic().next().value;
-        //     case 4: return tgm().next().value;
-        //     case 5: return tgm2().next().value;
-        //     case 6: return tgm3().next().value;
-        //     case 7: return gameBoy().next().value;
-        //     default: throw "Invalid pieceRandomiser";
-        // }
-        return "T";
+        switch (settings.pieceRandomiser) {
+            case 0: return trueRandom().next().value;
+            case 1: return bag(7).next().value;
+            case 2: return bag(14).next().value;
+            case 3: return classic().next().value;
+            case 4: return tgm().next().value;
+            case 5: return tgm2().next().value;
+            case 6: return tgm3().next().value;
+            case 7: return gameBoy().next().value;
+            default: throw "Invalid pieceRandomiser";
+        }
     }
 
     function startGame() {

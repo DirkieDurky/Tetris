@@ -204,7 +204,7 @@ settings.tudp = 999999999;
 settings.spawnPosY = 20;
 settings.rswpp = true;
 settings.hold = true;
-settings.nextAmount = 0;
+settings.nextAmount = 6;
 settings.autoRestart = false;
 
 if (settings.nextAmount > 6) {
