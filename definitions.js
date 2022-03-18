@@ -196,7 +196,7 @@ let settings = {
 }
 
 // My personal settings
-settings.das = 100;
+settings.das = 130;
 settings.arr = 0;
 settings.gravity = 10;
 settings.sds = 0;
