@@ -47,7 +47,7 @@
  Custom Tetromino color / texture
  Prevent accidental misdrops option
  Autopause on focus loss
- An option to show how many milliseconds you pressed the left or right button too long for das to activate
+ A mode where you have to press right or left as close to the das setting as possible so you can train that
 
  Set activeTetromino as default for alot of functions
  Pause button
