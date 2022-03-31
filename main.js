@@ -1,3 +1,5 @@
+// sendUserLogInMessage("Tetris");
+
 $(document).ready(function(){
     const playField = document.getElementById("playField");
     const pfCtx = playField.getContext("2d");
@@ -175,14 +177,14 @@ $(document).ready(function(){
         }
     }
 
-    function spawnPiece(piece) {
+    function spawnPiece(piece,yOffset) {
         if (Number.isInteger(piece)) {
             piece = pieceBag[piece];
         }
 
         activePiece = {
             x: settings.spawnPosX,
-            y: settings.spawnPosY,
+            y: settings.spawnPosY + yOffset,
             piece: piece,
             rotation: 0
         }
@@ -453,7 +455,7 @@ $(document).ready(function(){
                                 } else {
                                     tmp = activePiece.piece;
                                     activePiece = null;
-                                    spawnPiece(hold);
+                                    spawnPiece(hold,0);
                                     hold = tmp;
                                     renderHold();
                                     // noinspection JSUndeclaredVariable
@@ -550,29 +552,31 @@ $(document).ready(function(){
         } else {
             nextPiece = addNextPiece();
         }
-            if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY, nextPiece, 0)) {
+        for (let i=0;i<=settings.spawnLeniency;i++){
+            if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY+i, nextPiece, 0)) {
                 if (settings.nextAmount > 0) {
-                    spawnPiece(nextPieces[0]);
+                    spawnPiece(nextPieces[0], i);
                     nextPieces.shift();
                     nextPieces.push(addNextPiece());
                 } else {
-                    spawnPiece(nextPiece);
+                    spawnPiece(nextPiece, 0);
                 }
                 renderNext();
-            } else {
-                clearInterval(gameTick);
-                gameRunning = false;
-                startButton.html("Start");
-                if (settings.autoRestart) {
-                    startGame();
-                } else {
-                    if (restartButton != null){
-                        restartButton.remove();
-                    }
+                if (heldSide.length !== 0) {
+                    moveInstantly(heldSide[0])
                 }
+                return;
             }
-        if (heldSide.length !== 0) {
-            moveInstantly(heldSide[0])
+        }
+        clearInterval(gameTick);
+        gameRunning = false;
+        startButton.html("Start");
+        if (settings.autoRestart) {
+            startGame();
+        } else {
+            if (restartButton != null){
+                restartButton.remove();
+            }
         }
     }
 
@@ -795,5 +799,4 @@ $(document).ready(function(){
         sevenBag = [];
         startGame();
     }
-    document.getElementById("")
 })
