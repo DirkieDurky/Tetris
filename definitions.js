@@ -130,7 +130,7 @@ let settings = {
     pfGridW: 10,
     blockSize: 40,
     spawnPosX: 6,
-    spawnPosY: 20,
+    spawnPosY: 21,
 
     //Gameplay
     autoRestart: false,
@@ -154,6 +154,7 @@ let settings = {
     leniency: true,
         tup: 500, //Time until placed when not moving the piece
         tudp: 2000, //Time until piece is placed no matter what
+    spawnLeniency: 1, //Amount of blocks the game allows pieces to spawn if it cant be placed in the original spawn location
     rswpp: true, //Remove softDrop when piece placed
     ghostPiece: true,
     nesTetrisRotations: false,
@@ -196,16 +197,11 @@ let settings = {
 }
 
 // My personal settings
-settings.das = 100;
+settings.das = 130;
 settings.arr = 0;
 settings.gravity = 10;
 settings.sds = 0;
 settings.tudp = 999999999;
-settings.spawnPosY = 20;
-settings.rswpp = true;
-settings.hold = true;
-settings.nextAmount = 6;
-settings.autoRestart = false;
 
 if (settings.nextAmount > 6) {
     throw "Max nextAmount is 6";
