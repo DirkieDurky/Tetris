@@ -47,7 +47,6 @@
  Custom Tetromino color / texture
  Prevent accidental misdrops option
  Autopause on focus loss
- A "Replay with same piece set" option
  A mode where you have to press right or left as close to the das setting as possible so you can train that
 
  Set activeTetromino as default for alot of functions
