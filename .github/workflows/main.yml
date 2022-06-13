@@ -1,0 +1,21 @@
+name: Deploy website on push
+on: 
+  push:
+    branches:
+    - live
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get latest code
+      uses: actions/checkout@v2
+      with: 
+        ref: live
+    - name: Sync files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: 92.63.169.233
+        username: github
+        password: ${{ secrets.ftp_password }}
+        server-dir: var_www/portfolio/
