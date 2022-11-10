@@ -2,7 +2,7 @@ name: Deploy website on push
 on: 
   push:
     branches:
-    - live
+    - main
 jobs:
   web-deploy:
     name: Deploy
@@ -11,11 +11,11 @@ jobs:
     - name: Get latest code
       uses: actions/checkout@v2
       with: 
-        ref: live
+        ref: main
     - name: Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      uses: wlixcc/SFTP-Deploy-Action@v1.2.4
       with:
         server: 92.63.169.233
         username: github
         password: ${{ secrets.ftp_password }}
-        server-dir: var_www/tetris-playground/
+        remote_path: var_www/tetris-playground/
