@@ -1,3 +1,16 @@
+/*
+Possible additions:
+
+Other ways of defining a T-spin:
+https://tetris.fandom.com/wiki/T-Spin
+
+Rename tudp to lock delay
+
+Movesets. Everyone can make a moveset which is a set of moves the player has to replicate. The creator of the moveset can choose if to finish the moveset is required to just place all blocks in the same spot, if it's required to do it in the same amount of keypresses, or if it's required to replicate the exact same keypresses
+
+Drought training mode. You won't get any long bars.
+All clear training mode. You will be given different boards with a given set of pieces and you will have to get the board to an all clear. (https://youtu.be/-3DOv50RsOY)
+*/
 const playField = document.getElementById("playField");
 const pfCtx = playField.getContext("2d");
 
