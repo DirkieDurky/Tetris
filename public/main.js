@@ -7,20 +7,20 @@ const hbCtx = holdBox.getContext("2d");
 const nextBox = document.getElementById("nextBox");
 const nbCtx = nextBox.getContext("2d");
 
-playField.setAttribute("width",pfW+"px");
-playField.setAttribute("height",pfH+"px");
-playField.style.width = pfW+"px";
-playField.style.height = pfH+"px";
+playField.setAttribute("width", pfW + "px");
+playField.setAttribute("height", pfH + "px");
+playField.style.width = pfW + "px";
+playField.style.height = pfH + "px";
 
-holdBox.setAttribute("width",holdW+"px");
-holdBox.setAttribute("height",holdH+"px");
-holdBox.style.width = holdW+"px";
-holdBox.style.height = holdH+"px";
+holdBox.setAttribute("width", holdW + "px");
+holdBox.setAttribute("height", holdH + "px");
+holdBox.style.width = holdW + "px";
+holdBox.style.height = holdH + "px";
 
-nextBox.setAttribute("width",nextW+"px");
-nextBox.setAttribute("height",nextH+"px");
-nextBox.style.width = nextW+"px";
-nextBox.style.height = nextH+"px";
+nextBox.setAttribute("width", nextW + "px");
+nextBox.setAttribute("height", nextH + "px");
+nextBox.style.width = nextW + "px";
+nextBox.style.height = nextH + "px";
 
 const startButton = $("#startButton");
 let restartButton = null;
@@ -34,25 +34,25 @@ if (settings.nextAmount < 1) {
 }
 
 //Make grid
-for (let i=0; i<pfW; i=i+(pfW/settings.pfGridW)) {
-    pfCtx.moveTo(i,0);
-    pfCtx.lineTo(i,pfH);
+for (let i = 0; i < pfW; i = i + (pfW / settings.pfGridW)) {
+    pfCtx.moveTo(i, 0);
+    pfCtx.lineTo(i, pfH);
 }
-for (let j=0; j<pfH; j=j+pfH/settings.pfGridH) {
-    pfCtx.moveTo(0,j);
-    pfCtx.lineTo(pfW,j);
+for (let j = 0; j < pfH; j = j + pfH / settings.pfGridH) {
+    pfCtx.moveTo(0, j);
+    pfCtx.lineTo(pfW, j);
 }
 
-pfCtx.strokeStyle="#7d7d7d";
-pfCtx.lineWidth=1;
+pfCtx.strokeStyle = "#7d7d7d";
+pfCtx.lineWidth = 1;
 pfCtx.stroke();
 
-function clearCanvas(ctx,canvas) {
+function clearCanvas(ctx, canvas) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.stroke();
 }
 
-function drawBlock(ctx,x,y,color,opacity = 100){
+function drawBlock(ctx, x, y, color, opacity = 100) {
     let w;
     let h;
     let gridW;
@@ -78,28 +78,28 @@ function drawBlock(ctx,x,y,color,opacity = 100){
             break;
         default: throw "Invalid ctx";
     }
-    ctx.fillStyle = hexToRgbA(color,opacity);
-    y = invert(y,1,gridH);
-    ctx.fillRect((w/gridW)*(x-1),(h/gridH*(y-1)),w/gridW,h/gridH);
+    ctx.fillStyle = hexToRgbA(color, opacity);
+    y = invert(y, 1, gridH);
+    ctx.fillRect((w / gridW) * (x - 1), (h / gridH * (y - 1)), w / gridW, h / gridH);
 }
 
-function drawPiece(ctx = pfCtx,x = activePiece.x,y = activePiece.y,piece = activePiece.piece,
-                       rotation = activePiece.rotation,color,opacity = 100){
+function drawPiece(ctx = pfCtx, x = activePiece.x, y = activePiece.y, piece = activePiece.piece,
+    rotation = activePiece.rotation, color, opacity = 100) {
     let pieceData = pieces.find(el => el.name === piece);
     let pieceRotation = pieceData.rotations[rotation];
     if (typeof color === "undefined") {
         color = pieceData.color;
     }
 
-    for (let i=0;i<pieceRotation.length;i++) {
-        drawBlock(ctx,x+pieceRotation[i][0],y+pieceRotation[i][1],color,opacity);
+    for (let i = 0; i < pieceRotation.length; i++) {
+        drawBlock(ctx, x + pieceRotation[i][0], y + pieceRotation[i][1], color, opacity);
     }
 }
 
 function setOffset(piece) {
     let result = {
-        y:0,
-        x:0
+        y: 0,
+        x: 0
     };
 
     switch (piece) {
@@ -114,7 +114,7 @@ function setOffset(piece) {
 }
 
 function renderHold() {
-    clearCanvas(hbCtx,holdBox);
+    clearCanvas(hbCtx, holdBox);
     if (hold !== null) {
         let pieceData = pieces.find(el => el.name === hold);
         const pieceRotation = pieceData.rotations[0];
@@ -130,17 +130,17 @@ function renderHold() {
 
         const offset = setOffset(hold);
 
-        for (let i=0;i<pieceRotation.length;i++) {
-            drawBlock(hbCtx, offsetX + offset.x + pieceRotation[i][0], offsetY + offset.y + pieceRotation[i][1],color);
+        for (let i = 0; i < pieceRotation.length; i++) {
+            drawBlock(hbCtx, offsetX + offset.x + pieceRotation[i][0], offsetY + offset.y + pieceRotation[i][1], color);
         }
     }
 }
 
 function renderNext() {
-    clearCanvas(nbCtx,nextBox);
+    clearCanvas(nbCtx, nextBox);
 
     const offsetX = 4;
-    let offsetY = 3 + 3*settings.nextAmount;
+    let offsetY = 3 + 3 * settings.nextAmount;
     nextPieces.forEach(piece => {
         const pieceData = pieces.find(el => el.name === piece);
         const pieceRotation = pieceData.rotations[0];
@@ -149,14 +149,14 @@ function renderNext() {
 
         const offset = setOffset(piece);
 
-        for (let i=0;i<pieceRotation.length;i++) {
-            drawBlock(nbCtx, offsetX + offset.x + pieceRotation[i][0], offsetY + offset.y + pieceRotation[i][1],color);
+        for (let i = 0; i < pieceRotation.length; i++) {
+            drawBlock(nbCtx, offsetX + offset.x + pieceRotation[i][0], offsetY + offset.y + pieceRotation[i][1], color);
         }
     })
 }
 
 function render() {
-    clearCanvas(pfCtx,playField);
+    clearCanvas(pfCtx, playField);
 
     //Get ghost piece position
     if (settings.ghostPiece) {
@@ -166,15 +166,15 @@ function render() {
         while (!checkCollision("down", activePiece.x, ghostPiece.y, activePiece.piece, activePiece.rotation)) {
             ghostPiece.y--;
         }
-        drawPiece(undefined,undefined, ghostPiece.y, undefined, undefined, settings.ghostPieceColor, settings.ghostPieceOpacity);
+        drawPiece(undefined, undefined, ghostPiece.y, undefined, undefined, settings.ghostPieceColor, settings.ghostPieceOpacity);
     }
     drawPiece();
-    for (let i=0;i<passiveBlocks.length;i++) {
-        drawBlock(pfCtx,passiveBlocks[i].x,passiveBlocks[i].y,passiveBlocks[i].color);
+    for (let i = 0; i < passiveBlocks.length; i++) {
+        drawBlock(pfCtx, passiveBlocks[i].x, passiveBlocks[i].y, passiveBlocks[i].color);
     }
 }
 
-function spawnPiece(piece,yOffset) {
+function spawnPiece(piece, yOffset) {
     if (Number.isInteger(piece)) {
         piece = pieceBag[piece];
     }
@@ -193,20 +193,20 @@ function virtRotate(rotation, direction) {
     switch (direction) {
         case "cw":
             if (rotation < 3) {
-                return rotation+1;
+                return rotation + 1;
             } else {
                 return 0;
             }
         case "ccw":
             if (rotation > 0) {
-                return rotation-1;
+                return rotation - 1;
             } else {
                 return 3;
             }
         case "180":
-            for (let i=0;i<2;i++){
+            for (let i = 0; i < 2; i++) {
                 if (rotation < 3) {
-                    rotation = rotation+1;
+                    rotation = rotation + 1;
                 } else {
                     rotation = 0;
                 }
@@ -217,70 +217,70 @@ function virtRotate(rotation, direction) {
     }
 }
 
-function checkOutOfBounds(x,y,piece,rotation) {
+function checkOutOfBounds(x, y, piece, rotation) {
     let pieceRotation = pieces.find(el => el.name === piece).rotations[rotation];
     let outOfBounds = false;
-    for (let i=0;i<pieceRotation.length;i++) {
-        if (x+pieceRotation[i][0] < 1) outOfBounds = true; else
-        if (x+pieceRotation[i][0] > settings.pfGridW) outOfBounds = true; else
-        if (y+pieceRotation[i][1] < 1) outOfBounds = true; else
-        if (settings.topCollision) {
-            if (y+pieceRotation[i][1] > settings.pfGridH) outOfBounds = true;
-        }
+    for (let i = 0; i < pieceRotation.length; i++) {
+        if (x + pieceRotation[i][0] < 1) outOfBounds = true; else
+            if (x + pieceRotation[i][0] > settings.pfGridW) outOfBounds = true; else
+                if (y + pieceRotation[i][1] < 1) outOfBounds = true; else
+                    if (settings.topCollision) {
+                        if (y + pieceRotation[i][1] > settings.pfGridH) outOfBounds = true;
+                    }
     }
     return outOfBounds;
 }
 
-function checkBlockCollision(x,y,piece,rotation) {
+function checkBlockCollision(x, y, piece, rotation) {
     let pieceRotation = pieces.find(el => el.name === piece).rotations[rotation];
-    for (let i=0;i<pieceRotation.length;i++) {
-        if (blockAtPos(x+pieceRotation[i][0],y+pieceRotation[i][1])) return true;
+    for (let i = 0; i < pieceRotation.length; i++) {
+        if (blockAtPos(x + pieceRotation[i][0], y + pieceRotation[i][1])) return true;
     }
 }
 
-function checkCollision(mode, x = activePiece.x, y = activePiece.y, piece = activePiece.piece, rotation = activePiece.rotation){
+function checkCollision(mode, x = activePiece.x, y = activePiece.y, piece = activePiece.piece, rotation = activePiece.rotation) {
     let pieceRotations = pieces.find(el => el.name === piece).rotations[rotation];
     let VirtRotation;
     switch (mode) {
         case "down":
-            for (let i=0;i<pieceRotations.length;i++) if (y+pieceRotations[i][1]-1 < 1) return true;
-            if (checkBlockCollision(x,y-1,piece,rotation)) return true;
+            for (let i = 0; i < pieceRotations.length; i++) if (y + pieceRotations[i][1] - 1 < 1) return true;
+            if (checkBlockCollision(x, y - 1, piece, rotation)) return true;
             break;
         case "left":
-            for (let i=0;i<pieceRotations.length;i++) if (x+pieceRotations[i][0]-1 < 1) return true;
-            if (checkBlockCollision(x-1,y,piece,rotation)) return true;
+            for (let i = 0; i < pieceRotations.length; i++) if (x + pieceRotations[i][0] - 1 < 1) return true;
+            if (checkBlockCollision(x - 1, y, piece, rotation)) return true;
             break;
         case "right":
-            for (let i=0;i<pieceRotations.length;i++) if (x+pieceRotations[i][0]+1 > settings.pfGridW) return true;
-            if (checkBlockCollision(x+1,y,piece,rotation)) return true;
+            for (let i = 0; i < pieceRotations.length; i++) if (x + pieceRotations[i][0] + 1 > settings.pfGridW) return true;
+            if (checkBlockCollision(x + 1, y, piece, rotation)) return true;
             break;
         case "rotateCw":
             VirtRotation = virtRotate(rotation, "cw");
-            if (checkOutOfBounds(x,y,piece,VirtRotation) ||
-            checkBlockCollision(x,y,piece,VirtRotation)) return true;
+            if (checkOutOfBounds(x, y, piece, VirtRotation) ||
+                checkBlockCollision(x, y, piece, VirtRotation)) return true;
             break;
         case "rotateCcw":
             VirtRotation = virtRotate(rotation, "ccw");
-            if (checkOutOfBounds(x,y,piece,VirtRotation)||
-                checkBlockCollision(x,y,piece,VirtRotation)) return true;
+            if (checkOutOfBounds(x, y, piece, VirtRotation) ||
+                checkBlockCollision(x, y, piece, VirtRotation)) return true;
             break;
         case "rotate180":
             VirtRotation = virtRotate(rotation, "180");
-            if (checkOutOfBounds(x,y,piece,VirtRotation)||
-                checkBlockCollision(x,y,piece,VirtRotation)) return true;
+            if (checkOutOfBounds(x, y, piece, VirtRotation) ||
+                checkBlockCollision(x, y, piece, VirtRotation)) return true;
             break;
         case "all":
-            if (checkOutOfBounds(x,y,piece,rotation) ||
-                checkBlockCollision(x,y,piece,rotation)) return true;
+            if (checkOutOfBounds(x, y, piece, rotation) ||
+                checkBlockCollision(x, y, piece, rotation)) return true;
             break;
         default:
             throw "Enter a valid mode";
     }
 }
 
-function tryPosition(x,y,rotation) {
+function tryPosition(x, y, rotation) {
     // console.log(`Trying position ${activePiece.x+x},${activePiece.y+y} with piece ${activePiece.piece} at rotation ${rotation}...`)
-    return !(checkCollision("all",activePiece.x+x,activePiece.y+y,activePiece.piece,rotation))
+    return !(checkCollision("all", activePiece.x + x, activePiece.y + y, activePiece.piece, rotation))
     // if (checkCollision("all",activePiece.x+x,activePiece.y+y,activePiece.piece,rotation)) {
     //     console.log('Not possible');
     //     return false;
@@ -293,7 +293,7 @@ function tryPosition(x,y,rotation) {
 function rotate(direction) {
     if (activePiece.piece === "O") return;
 
-    rotationName = activePiece.rotation+"-"+virtRotate(activePiece.rotation,direction);
+    rotationName = activePiece.rotation + "-" + virtRotate(activePiece.rotation, direction);
     let rotation;
     switch (rotationName) {
         case "0-1": rotation = 0; break;
@@ -310,11 +310,11 @@ function rotate(direction) {
         case "3-1": rotation = 11; break;
     }
     let neededSrsData = SrsData.find(el => el.name.includes(activePiece.piece)).rotations[rotation];
-    for (let i=0;i<neededSrsData.length;i++) {
-        if (tryPosition(neededSrsData[i][0],neededSrsData[i][1],virtRotate(activePiece.rotation,direction))) {
+    for (let i = 0; i < neededSrsData.length; i++) {
+        if (tryPosition(neededSrsData[i][0], neededSrsData[i][1], virtRotate(activePiece.rotation, direction))) {
             activePiece.x += neededSrsData[i][0];
             activePiece.y += neededSrsData[i][1];
-            activePiece.rotation = virtRotate(activePiece.rotation,direction);
+            activePiece.rotation = virtRotate(activePiece.rotation, direction);
             return;
         }
     }
@@ -329,17 +329,17 @@ function moveInstantly(keycode) {
     let side;
     switch (keycode) {
         case settings.controls.moveLeft: side = "left";
-        break;
+            break;
         case settings.controls.moveRight: side = "right";
-        break;
+            break;
         default: throw "Invalid keycode";
     }
     while (!checkCollision(side)) {
         switch (side) {
             case "left": activePiece.x--;
-            break;
+                break;
             case "right": activePiece.x++;
-            break;
+                break;
         }
     }
     render();
@@ -452,7 +452,7 @@ $(document).keydown(function (e) {
                             } else {
                                 tmp = activePiece.piece;
                                 activePiece = null;
-                                spawnPiece(hold,0);
+                                spawnPiece(hold, 0);
                                 hold = tmp;
                                 renderHold();
                                 // noinspection JSUndeclaredVariable
@@ -511,7 +511,7 @@ function dropInstantly() {
     }
 }
 
-$(document).keyup(function(e){
+$(document).keyup(function (e) {
     const keycode = (e.keyCode ? e.keyCode : e.which);
     const index = down.indexOf(keycode);
     if (index > -1) {
@@ -549,8 +549,8 @@ function spawnNextPiece() {
     } else {
         nextPiece = addNextPiece();
     }
-    for (let i=0;i<=settings.spawnLeniency;i++){
-        if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY+i, nextPiece, 0)) {
+    for (let i = 0; i <= settings.spawnLeniency; i++) {
+        if (!checkCollision("all", settings.spawnPosX, settings.spawnPosY + i, nextPiece, 0)) {
             if (settings.nextAmount > 0) {
                 spawnPiece(nextPieces[0], i);
                 nextPieces.shift();
@@ -571,7 +571,7 @@ function spawnNextPiece() {
     if (settings.autoRestart) {
         startGame();
     } else {
-        if (restartButton != null){
+        if (restartButton != null) {
             restartButton.remove();
         }
     }
@@ -634,7 +634,7 @@ function startGame() {
     renderHold();
 
     nextPieces = [];
-    for (let i=0;i<settings.nextAmount;i++) {
+    for (let i = 0; i < settings.nextAmount; i++) {
         nextPieces.push(addNextPiece());
     }
 
@@ -642,17 +642,17 @@ function startGame() {
     startInterval();
 }
 
-function blockAtPos(x,y) {
+function blockAtPos(x, y) {
     return !!passiveBlocks.find(el => el.x === x && el.y === y);
 }
 
-function blockAtRelPos(x,y) {
+function blockAtRelPos(x, y) {
     if (settings.topCollision) {
-        return !!activePiece.x+x > settings.pfGridW || activePiece.x+x < 1 || activePiece.y+y > settings.pfGridH || activePiece.y+y < 1 ||
-            passiveBlocks.find(el => el.x === activePiece.x+x && el.y === activePiece.y+y);
+        return !!activePiece.x + x > settings.pfGridW || activePiece.x + x < 1 || activePiece.y + y > settings.pfGridH || activePiece.y + y < 1 ||
+            passiveBlocks.find(el => el.x === activePiece.x + x && el.y === activePiece.y + y);
     } else {
-        return !!activePiece.x+x > settings.pfGridW || activePiece.x+x < 1 || activePiece.y+y < 1 ||
-            passiveBlocks.find(el => el.x === activePiece.x+x && el.y === activePiece.y+y);
+        return !!activePiece.x + x > settings.pfGridW || activePiece.x + x < 1 || activePiece.y + y < 1 ||
+            passiveBlocks.find(el => el.x === activePiece.x + x && el.y === activePiece.y + y);
     }
 }
 
@@ -663,31 +663,31 @@ function placePiece() {
     // let activeBlocks = blocksFromPiece(activePiece.x, activePiece.y, activePiece.piece, activePiece.rotation);
     const color = pieces.find(el => el.name === activePiece.piece).color;
     //Add all blocks of active Piece to passiveBlocks array
-    for (let i=0;i<pieceData.length;i++) {
-        passiveBlocks.push({x: x+pieceData[i][0], y: y+pieceData[i][1], color: color});
+    for (let i = 0; i < pieceData.length; i++) {
+        passiveBlocks.push({ x: x + pieceData[i][0], y: y + pieceData[i][1], color: color });
     }
     //Check for T-spin
     let tSpin = false;
     if (activePiece.piece === "T") {
         switch (activePiece.rotation) {
             //2 blocks in the 'armpit'                                        and 1 on the flat side
-            case 0: if ((blockAtRelPos(0,0) && blockAtRelPos(-2,0) && (blockAtRelPos(-2,-2) || blockAtRelPos(0,-2))) ||
+            case 0: if ((blockAtRelPos(0, 0) && blockAtRelPos(-2, 0) && (blockAtRelPos(-2, -2) || blockAtRelPos(0, -2))) ||
                 //2 blocks on the flat side,
-                blockAtRelPos(-2,-2) && blockAtRelPos(0,-2) &&
+                blockAtRelPos(-2, -2) && blockAtRelPos(0, -2) &&
                 //1 in an armpit and cant move
-                    ((blockAtRelPos(0,0) && blockAtRelPos(-3,-1)) || (blockAtRelPos(-2,0) && blockAtRelPos(1,-1)))) tSpin = true;
+                ((blockAtRelPos(0, 0) && blockAtRelPos(-3, -1)) || (blockAtRelPos(-2, 0) && blockAtRelPos(1, -1)))) tSpin = true;
                 break;
-            case 1: if (blockAtRelPos(0,0) && blockAtRelPos(0,-2) && (blockAtRelPos(-2,0) || blockAtRelPos(-2,-2)) ||
-                blockAtRelPos(-2,0) && blockAtRelPos(-2,-2) &&
-                    ((blockAtRelPos(0,0) && blockAtRelPos(-1,-3)) || (blockAtRelPos(0,-2) && blockAtRelPos(-1,1)))) tSpin = true;
+            case 1: if (blockAtRelPos(0, 0) && blockAtRelPos(0, -2) && (blockAtRelPos(-2, 0) || blockAtRelPos(-2, -2)) ||
+                blockAtRelPos(-2, 0) && blockAtRelPos(-2, -2) &&
+                ((blockAtRelPos(0, 0) && blockAtRelPos(-1, -3)) || (blockAtRelPos(0, -2) && blockAtRelPos(-1, 1)))) tSpin = true;
                 break;
-            case 2: if (blockAtRelPos(-2,-2) && blockAtRelPos(0,-2) && (blockAtRelPos(0,0) || blockAtRelPos(-2,0)) ||
-                blockAtRelPos(0,0) && blockAtRelPos(-2,0) &&
-                    ((blockAtRelPos(-2,-2) && blockAtRelPos(1,-1)) || (blockAtRelPos(0,-2) && blockAtRelPos(-3,-1)))) tSpin = true;
+            case 2: if (blockAtRelPos(-2, -2) && blockAtRelPos(0, -2) && (blockAtRelPos(0, 0) || blockAtRelPos(-2, 0)) ||
+                blockAtRelPos(0, 0) && blockAtRelPos(-2, 0) &&
+                ((blockAtRelPos(-2, -2) && blockAtRelPos(1, -1)) || (blockAtRelPos(0, -2) && blockAtRelPos(-3, -1)))) tSpin = true;
                 break;
-            case 3: if (blockAtRelPos(-2,0) && blockAtRelPos(-2,-2) && (blockAtRelPos(0,0) || blockAtRelPos(0,-2)) ||
-                blockAtRelPos(0,0) && blockAtRelPos(0,-2) &&
-                    ((blockAtRelPos(-2,0) && blockAtRelPos(-1,-3)) || (blockAtRelPos(-2,-2) && blockAtRelPos(-1,1)))) tSpin = true;
+            case 3: if (blockAtRelPos(-2, 0) && blockAtRelPos(-2, -2) && (blockAtRelPos(0, 0) || blockAtRelPos(0, -2)) ||
+                blockAtRelPos(0, 0) && blockAtRelPos(0, -2) &&
+                ((blockAtRelPos(-2, 0) && blockAtRelPos(-1, -3)) || (blockAtRelPos(-2, -2) && blockAtRelPos(-1, 1)))) tSpin = true;
                 break;
         }
     }
@@ -695,13 +695,13 @@ function placePiece() {
     //Clear lines if applicable
     let line;
     let lineAmount = 0;
-    for (let i=0; i<settings.pfGridH; i++) {
+    for (let i = 0; i < settings.pfGridH; i++) {
         line = passiveBlocks.filter(el => el.y === i);
         if (line.length >= settings.pfGridW) {
             lineAmount++;
             i--;
             //Remove line
-            line.forEach(el => passiveBlocks.splice(passiveBlocks.indexOf(el),1));
+            line.forEach(el => passiveBlocks.splice(passiveBlocks.indexOf(el), 1));
             //Move all blocks above line down by 1
             passiveBlocks.filter(el => el.y > i).forEach(el => el.y--);
         }
@@ -755,14 +755,14 @@ function placePiece() {
 }
 
 function startTimeout() {
-    tup = setTimeout(function(){
+    tup = setTimeout(function () {
         clearInterval(tudp);
         if (checkCollision("down")) {
             placePiece();
         } else {
             tup = null;
         }
-    },settings.tup);
+    }, settings.tup);
 }
 
 function pause() {
@@ -779,12 +779,12 @@ function start() {
     startButton.after("<button id=\"restartButton\" class=\"button\">Restart</button>");
     restartButton = $("#restartButton");
     startGame();
-    restartButton.click(function(){
+    restartButton.click(function () {
         restart();
     })
 }
 
-startButton.click(function (){
+startButton.click(function () {
     if (!gameRunning) {
         start();
     } else {

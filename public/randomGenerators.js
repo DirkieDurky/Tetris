@@ -26,14 +26,14 @@ function* bag(bagAmount) {
         if (sevenBag.length < 1) {
             let executeAmount = 1;
             if (bagAmount === 14) executeAmount = 2;
-            for (let i=0;i<executeAmount;i++) {
+            for (let i = 0; i < executeAmount; i++) {
                 pieceBag.forEach(el => {
                     sevenBag.push(el);
                 })
             }
         }
         let piece = sevenBag[Math.floor(Math.random() * sevenBag.length)]
-        sevenBag.splice(sevenBag.indexOf(piece),1);
+        sevenBag.splice(sevenBag.indexOf(piece), 1);
         // console.log(`Got ${piece} from bag. Left of bag: ${sevenBag}`)
         yield piece;
     }
