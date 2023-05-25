@@ -390,8 +390,8 @@ $(document).keydown(function (e) {
         if (down.includes(keycode)) return;
         down.push(keycode);
 
-        if (tup !== null) {
-            clearTimeout(tup);
+        if (ttl !== null) {
+            clearTimeout(ttl);
             startTimeout();
         }
 
@@ -473,6 +473,12 @@ $(document).keydown(function (e) {
                             if (checkCollision("down")) {
                                 clearInterval(gameTick);
                                 startInterval();
+                                clearInterval(softDrop);
+                                setTimeout(() => {
+                                    clearTimeout(ttl);
+                                    clearTimeout(ttdl);
+                                    placePiece();
+                                }, settings.ttdlsd)
                                 render();
                                 return;
                             }
@@ -539,8 +545,8 @@ $(document).keyup(function (e) {
 
 let nextPieces;
 let gameTick;
-let tup = null;
-let tudp = null;
+let ttl = null;
+let ttdl = null;
 let nextPiece;
 
 function spawnNextPiece() {
@@ -583,18 +589,19 @@ function startInterval() {
             if (!gamePaused) {
                 if (checkCollision("down")) {
                     if (settings.leniency) {
-                        if (tup === null) {
+                        if (ttl === null) {
                             startTimeout();
                         }
-                        if (tudp === null) {
-                            tudp = setTimeout(function () {
-                                clearInterval(tup);
+                        if (ttdl === null) {
+                            ttdl = setTimeout(function () {
+                                clearInterval(ttl);
+                                clearInterval(softDrop);
                                 if (checkCollision("down")) {
                                     placePiece();
                                 } else {
-                                    tudp = null;
+                                    ttdl = null;
                                 }
-                            }, settings.tudp);
+                            }, settings.ttdl);
                         }
                     } else {
                         placePiece();
@@ -739,8 +746,8 @@ function placePiece() {
 
     //Check for All clears
     if (passiveBlocks.length === 0) console.log("All clear!");
-    tup = null;
-    tudp = null;
+    ttl = null;
+    ttdl = null;
     spawnNextPiece();
 
     //Remove softDrop when piece placed
@@ -755,14 +762,15 @@ function placePiece() {
 }
 
 function startTimeout() {
-    tup = setTimeout(function () {
-        clearInterval(tudp);
+    ttl = setTimeout(function () {
+        clearInterval(ttdl);
+        clearInterval(softDrop)
         if (checkCollision("down")) {
             placePiece();
         } else {
-            tup = null;
+            ttl = null;
         }
-    }, settings.tup);
+    }, settings.ttl);
 }
 
 function pause() {

@@ -121,9 +121,9 @@ let held = false;
 let settings = {
 
     //Handling
-    das: 167,
-    arr: 31,
-    sds: 30,
+    das: 167, // Delayed auto shift
+    arr: 31, // Auto repeat rate
+    sds: 30, // Soft drop speed
 
     //PlayField
     pfGridH: 20,
@@ -152,8 +152,9 @@ let settings = {
     DTET Rotation System
      */
     leniency: true,
-    tup: 500, //Time until placed when not moving the piece
-    tudp: 2000, //Time until piece is placed no matter what
+    ttl: 500, //Time until a piece is placed when not moving the piece (Time to lock)
+    ttdl: 2000, //Time until a piece is placed no matter what (Time to definately lock)
+    ttdlsd: 250, //Time until a piece is placed when softdropping (Time to definately lock Soft drop)
     spawnLeniency: 1, //Amount of blocks the game allows pieces to spawn if it cant be placed in the original spawn location
     rswpp: true, //Remove softDrop when piece placed
     ghostPiece: true,
@@ -185,23 +186,36 @@ let settings = {
         moveRight: 39,
         moveLeft: 37,
         softDrop: 40,
-        hold: 38,
-        rotateCCW: 88,
-        rotateCW: 67,
-        rotate180: 86,
-        hardDrop: 90,
+        hold: 67,
+        rotateCCW: 90,
+        rotateCW: 38,
+        hardDrop: 32,
         restart: 82,
         pause: 27,
         start: 13
     }
 }
 
+function setDirkPreferences() {
     // My personal settings
+    controls.moveRight = 39;
+    controls.moveLeft = 37;
+    controls.softDrop = 40;
+    controls.hold = 38;
+    controls.rotateCCW = 88;
+    controls.rotateCW = 67;
+    controls.rotate180 = 86;
+    controls.hardDrop = 90;
+    controls.restart = 82;
+    controls.pause = 27;
+    controls.start = 13;
+
     settings.das = 130;
     settings.arr = 0;
     settings.gravity = 10;
     settings.sds = 0;
-    settings.tudp = 999999999;
+    settings.ttdl = 999999999;
+}
 
 if (settings.nextAmount > 6) {
     throw "Max nextAmount is 6";
