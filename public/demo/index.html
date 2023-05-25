@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv='cache-control' content='no-cache'>
+    <meta http-equiv='expires' content='0'>
+    <meta http-equiv='pragma' content='no-cache'>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris trainer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="definitions.js"></script>
+    <script src="helpFunctions.js"></script>
+    <script src="randomGenerators.js"></script>
+    <script defer src="main.js"></script>
+</head>
+
+<body>
+    <a id="demo-overlay" onclick="$('#demo-overlay').css('display','none'); startGame()">
+        <span id="demo-overlay-text">Click to start demo</span>
+    </a>
+    <div id="container">
+        <div id="leftSection">
+            <canvas id="holdBox"></canvas>
+            <div id="controls-container">
+                <h2>Controls:</h2>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/Arrow_Left_Key_Light.png" class="key-graphic">Move left
+                </div>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/Arrow_Right_Key_Light.png" class="key-graphic">Move
+                    right
+                </div>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/Arrow_Up_Key_Light.png" class="key-graphic">Rotate
+                    clockwise
+                </div>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/Z_Key_Light.png" class="key-graphic">Rotate
+                    counter-clockwise
+                </div>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/Arrow_Down_Key_Light.png" class="key-graphic">Softdrop
+                </div>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/Space_Key_Light.png" class="key-graphic">Harddrop
+                </div>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/C_Key_Light.png" class="key-graphic">Hold
+                </div>
+                <br>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/R_Key_Light.png" class="key-graphic">Restart
+                </div>
+                <div class="control">
+                    <img src="../assets/Xelu-key-graphics/Light/Esc_Key_Light.png" class="key-graphic">Pause / Unpause
+                </div>
+            </div>
+        </div>
+        <div id="midSection">
+            <canvas id="playField"></canvas>
+        </div>
+        <div id="rightSection">
+            <canvas id="nextBox"></canvas>
+        </div>
+    </div>
+</body>
+
+</html>
