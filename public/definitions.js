@@ -198,17 +198,17 @@ let settings = {
 
 function setDirkPreferences() {
     // My personal settings
-    controls.moveRight = 39;
-    controls.moveLeft = 37;
-    controls.softDrop = 40;
-    controls.hold = 38;
-    controls.rotateCCW = 88;
-    controls.rotateCW = 67;
-    controls.rotate180 = 86;
-    controls.hardDrop = 90;
-    controls.restart = 82;
-    controls.pause = 27;
-    controls.start = 13;
+    settings.controls.moveRight = 39;
+    settings.controls.moveLeft = 37;
+    settings.controls.softDrop = 40;
+    settings.controls.hold = 38;
+    settings.controls.rotateCCW = 88;
+    settings.controls.rotateCW = 67;
+    settings.controls.rotate180 = 86;
+    settings.controls.hardDrop = 90;
+    settings.controls.restart = 82;
+    settings.controls.pause = 27;
+    settings.controls.start = 13;
 
     settings.das = 130;
     settings.arr = 0;
